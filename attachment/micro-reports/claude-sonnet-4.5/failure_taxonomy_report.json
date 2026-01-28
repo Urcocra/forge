@@ -1,0 +1,121 @@
+{
+  "runtime/crash": {
+    "ruleId": "runtime/crash",
+    "layer": "L5/BrowserRuntime",
+    "category": "runtime",
+    "severity": "critical",
+    "message": "Browser page crashed or encountered a fatal error"
+  },
+  "runtime/console": {
+    "ruleId": "runtime/console",
+    "layer": "L5/BrowserRuntime",
+    "category": "runtime",
+    "severity": "error",
+    "message": "Console error detected"
+  },
+  "runtime/network": {
+    "ruleId": "runtime/network",
+    "layer": "L5/BrowserRuntime",
+    "category": "runtime",
+    "severity": "error",
+    "message": "Critical network resource failed to load"
+  },
+  "runtime/timeout": {
+    "ruleId": "runtime/timeout",
+    "layer": "L5/BrowserRuntime",
+    "category": "runtime",
+    "severity": "error",
+    "message": "Execution timed out"
+  },
+  "runtime/manifest-mismatch": {
+    "ruleId": "runtime/manifest-mismatch",
+    "layer": "L5/BrowserRuntime",
+    "category": "runtime",
+    "severity": "error",
+    "message": "Runtime artifacts do not match sandbox manifest"
+  },
+  "runtime/external-access": {
+    "ruleId": "runtime/external-access",
+    "layer": "L1/Warnings",
+    "category": "runtime",
+    "severity": "warning",
+    "message": "External resource accessed"
+  },
+  "parse/json": {
+    "ruleId": "parse/json",
+    "layer": "L4/Parse",
+    "category": "parse",
+    "severity": "error",
+    "message": "File includes invalid JSON"
+  },
+  "parse/tree": {
+    "ruleId": "parse/tree",
+    "layer": "L4/Parse",
+    "category": "parse",
+    "severity": "error",
+    "message": "Required file structure missing"
+  },
+  "parse/artifacts": {
+    "ruleId": "parse/artifacts",
+    "layer": "L4/Parse",
+    "category": "parse",
+    "severity": "warning",
+    "message": "Required artifact files are empty or missing content"
+  },
+  "connectivity/link": {
+    "ruleId": "connectivity/link",
+    "layer": "L3/StaticValidation",
+    "category": "connectivity",
+    "severity": "error",
+    "message": "File reference or link is broken"
+  },
+  "connectivity/binding": {
+    "ruleId": "connectivity/binding",
+    "layer": "L3/StaticValidation",
+    "category": "connectivity",
+    "severity": "error",
+    "message": "HTML/JS data binding mismatch"
+  },
+  "connectivity/schema": {
+    "ruleId": "connectivity/schema",
+    "layer": "L3/StaticValidation",
+    "category": "connectivity",
+    "severity": "error",
+    "message": "API Schema not correctly implemented in code"
+  },
+  "connectivity/route": {
+    "ruleId": "connectivity/route",
+    "layer": "L3/StaticValidation",
+    "category": "connectivity",
+    "severity": "error",
+    "message": "Route configuration is inconsistent"
+  },
+  "lint/level-a": {
+    "ruleId": "lint/level-a",
+    "layer": "L2/CodeQuality",
+    "category": "lint",
+    "severity": "error",
+    "message": "Critical code quality issue (Level A)"
+  },
+  "lint/level-b": {
+    "ruleId": "lint/level-b",
+    "layer": "L2/CodeQuality",
+    "category": "lint",
+    "severity": "warning",
+    "message": "Code quality warning (Level B)"
+  },
+  "lint/level-c": {
+    "ruleId": "lint/level-c",
+    "layer": "L2/CodeQuality",
+    "category": "lint",
+    "severity": "info",
+    "message": "Style suggestion (Level C)"
+  },
+  "model/no-output": {
+    "ruleId": "model/no-output",
+    "layer": "L1/Model",
+    "category": "model",
+    "severity": "error",
+    "message": "Model failed to generate output"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "name": "forge-core",
+  "version": "1.0.0",
+  "bin": {
+    "forge": "./bin/forge.cmd"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "forge": "ts-node forge/index.ts"
+  },
+  "author": "FORGE Authors",
+  "license": "MIT",
+  "description": "FORGE: Real-World Generative Engineering Evaluation",
+  "devDependencies": {
+    "@astrojs/check": "^0.9.6",
+    "@tailwindcss/typography": "^0.5.19",
+    "@types/node": "^24.10.1",
+    "@types/tmp": "^0.2.6",
+    "astro": "^5.16.8",
+    "daisyui": "^5.5.14",
+    "eslint": "^9.39.2",
+    "globals": "^17.0.0",
+    "playwright": "^1.57.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.18",
+    "@types/marked": "^5.0.2",
+    "crypto": "^1.0.1",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "highlight.js": "^11.11.1",
+    "katex": "^0.16.27",
+    "liquidjs": "^10.24.0",
+    "marked": "^17.0.1",
+    "marked-highlight": "^2.2.3",
+    "marked-katex-extension": "^5.1.6",
+    "openai": "^6.9.1",
+    "tailwindcss": "^4.1.18",
+    "tmp": "^0.2.5"
+  }
+}

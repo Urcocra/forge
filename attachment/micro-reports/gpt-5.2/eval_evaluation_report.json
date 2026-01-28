@@ -1,0 +1,564 @@
+{
+  "summary": {
+    "overallScore": 36.8,
+    "evalTokensTotal": 0,
+    "eciTotal": 0,
+    "esgDisclosure": {
+      "methodologyVersion": "1.0.0-frozen",
+      "definition": {
+        "metricName": "Eval Compute Index (ECI)",
+        "formula": "ECI = (EvalTokens * ParameterScale) / 10000",
+        "unit": "Dimensionless Index (Linear Proxy for Eval-Time Compute)"
+      },
+      "principles": {
+        "orthogonality": "ECI is mathematically orthogonal to Quality Score. High ECI != Low Quality.",
+        "nonPunitive": "ECI is a disclosure of cost, not a penalty on performance.",
+        "reproducibility": "ECI implies instantaneous evaluation cost, assuming deterministic token usage."
+      },
+      "freezingDeclaration": "This methodology is empirically validated and frozen. No runtime parameters affect this definition."
+    },
+    "breakdown": [
+      {
+        "taskId": "xs_task",
+        "size": "XS",
+        "score": 16,
+        "weight": 0.5999999999999999
+      },
+      {
+        "taskId": "s_task",
+        "size": "S",
+        "score": 43.2,
+        "weight": 0.7999999999999999
+      },
+      {
+        "taskId": "m_task",
+        "size": "M",
+        "score": 41,
+        "weight": 1
+      },
+      {
+        "taskId": "l_task",
+        "size": "L",
+        "score": 36,
+        "weight": 1.1999999999999997
+      }
+    ],
+    "esgBreakdown": [],
+    "weights": {
+      "XS": 0.5999999999999999,
+      "S": 0.7999999999999999,
+      "M": 1,
+      "L": 1.1999999999999997,
+      "XL": 1.4000000000000001
+    },
+    "esg": {
+      "parameterScale": null,
+      "score": 0
+    }
+  },
+  "config": {
+    "model": "openai/gpt-5.2",
+    "parameterScale": null
+  },
+  "results": [
+    {
+      "taskId": "xs_task",
+      "size": "XS",
+      "finalResult": {
+        "totalScore": 16,
+        "scoreBreakdown": {
+          "static": {
+            "completeness": 1,
+            "structure": 0,
+            "survivability": 0,
+            "connectivity": 1,
+            "connectivityBreakdown": {
+              "fileReference": 1,
+              "scriptBinding": 0,
+              "apiSchemaLinkage": 1,
+              "routeConsistency": 0
+            },
+            "lintErrorsLevelA": [],
+            "lintErrorsLevelB": [],
+            "lintErrorsLevelC": [],
+            "lintErrorCount": 0,
+            "lintErrors": [],
+            "failureAnnotations": [
+              {
+                "ruleId": "parse/json",
+                "layer": "L4/Parse",
+                "category": "parse",
+                "severity": "error",
+                "message": "Use of malformed files detected (Structure Score: 0.00)"
+              }
+            ],
+            "sandboxManifest": {
+              "entry": "index.html",
+              "filesMounted": [
+                "index.html"
+              ],
+              "fileHashes": {
+                "index.html": "77763cf182f877164e46a431eca99f8543ddd3191e4921c7799b8d90fb6710b2"
+              },
+              "generatedAt": "2026-01-26T21:00:31.450Z"
+            },
+            "timeTracking": {
+              "predictedMs": 30000,
+              "actualMs": 20407.3,
+              "completedInPredictedTime": true,
+              "startTime": "2026-01-26T21:00:03.020Z",
+              "endTime": "2026-01-26T21:00:31.451Z"
+            }
+          },
+          "runtime": null
+        },
+        "notes": [
+          "Failure classified as L4/Parse",
+          "Score capped at 50"
+        ],
+        "errors": [
+          "L4/Parse: Use of malformed files detected (Structure Score: 0.00)"
+        ],
+        "recommendedFixes": [],
+        "failureLayer": "L4/Parse",
+        "runtimeReport": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "examples": []
+        },
+        "failureAnnotations": [
+          {
+            "ruleId": "parse/json",
+            "layer": "L4/Parse",
+            "category": "parse",
+            "severity": "error",
+            "message": "Use of malformed files detected (Structure Score: 0.00)"
+          }
+        ]
+      },
+      "staticScore": {
+        "completeness": 1,
+        "structure": 0,
+        "survivability": 0,
+        "connectivity": 1,
+        "connectivityBreakdown": {
+          "fileReference": 1,
+          "scriptBinding": 0,
+          "apiSchemaLinkage": 1,
+          "routeConsistency": 0
+        },
+        "lintErrorsLevelA": [],
+        "lintErrorsLevelB": [],
+        "lintErrorsLevelC": [],
+        "lintErrorCount": 0,
+        "lintErrors": [],
+        "failureAnnotations": [
+          {
+            "ruleId": "parse/json",
+            "layer": "L4/Parse",
+            "category": "parse",
+            "severity": "error",
+            "message": "Use of malformed files detected (Structure Score: 0.00)"
+          }
+        ],
+        "sandboxManifest": {
+          "entry": "index.html",
+          "filesMounted": [
+            "index.html"
+          ],
+          "fileHashes": {
+            "index.html": "77763cf182f877164e46a431eca99f8543ddd3191e4921c7799b8d90fb6710b2"
+          },
+          "generatedAt": "2026-01-26T21:00:31.450Z"
+        },
+        "timeTracking": {
+          "predictedMs": 30000,
+          "actualMs": 20407.3,
+          "completedInPredictedTime": true,
+          "startTime": "2026-01-26T21:00:03.020Z",
+          "endTime": "2026-01-26T21:00:31.451Z"
+        }
+      },
+      "evalTokens": 1688.5
+    },
+    {
+      "taskId": "s_task",
+      "size": "S",
+      "finalResult": {
+        "totalScore": 43.2,
+        "scoreBreakdown": {
+          "static": {
+            "completeness": 0.9,
+            "structure": 0.4,
+            "survivability": 0.8,
+            "connectivity": 0.7,
+            "connectivityBreakdown": {
+              "fileReference": 1,
+              "scriptBinding": 0.75,
+              "apiSchemaLinkage": 1,
+              "routeConsistency": 0
+            },
+            "lintErrorsLevelA": [],
+            "lintErrorsLevelB": [],
+            "lintErrorsLevelC": [],
+            "lintErrorCount": 0,
+            "lintErrors": [],
+            "failureAnnotations": [
+              {
+                "ruleId": "parse/json",
+                "layer": "L4/Parse",
+                "category": "parse",
+                "severity": "error",
+                "message": "Use of malformed files detected (Structure Score: 0.50)"
+              }
+            ],
+            "sandboxManifest": {
+              "entry": "main.js",
+              "filesMounted": [
+                "index.html",
+                "main.js"
+              ],
+              "fileHashes": {
+                "index.html": "c72ce6b47a5a90f54e58282f6edefffb8779ce2469ad687b6ccccecc3ad60a87",
+                "main.js": "6ccac03ef8783120bda2962a12cf6fe76a18087c1625793e8261dd729f66ab49"
+              },
+              "generatedAt": "2026-01-26T21:00:45.536Z"
+            },
+            "timeTracking": {
+              "predictedMs": 60000,
+              "actualMs": 34855.6,
+              "completedInPredictedTime": true,
+              "startTime": "2026-01-26T21:00:31.452Z",
+              "endTime": "2026-01-26T21:00:45.547Z"
+            }
+          },
+          "runtime": null
+        },
+        "notes": [
+          "Failure classified as L4/Parse",
+          "Score capped at 50"
+        ],
+        "errors": [
+          "L4/Parse: Use of malformed files detected (Structure Score: 0.50)"
+        ],
+        "recommendedFixes": [],
+        "failureLayer": "L4/Parse",
+        "runtimeReport": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "examples": []
+        },
+        "failureAnnotations": [
+          {
+            "ruleId": "parse/json",
+            "layer": "L4/Parse",
+            "category": "parse",
+            "severity": "error",
+            "message": "Use of malformed files detected (Structure Score: 0.50)"
+          }
+        ]
+      },
+      "staticScore": {
+        "completeness": 0.9,
+        "structure": 0.4,
+        "survivability": 0.8,
+        "connectivity": 0.7,
+        "connectivityBreakdown": {
+          "fileReference": 1,
+          "scriptBinding": 0.75,
+          "apiSchemaLinkage": 1,
+          "routeConsistency": 0
+        },
+        "lintErrorsLevelA": [],
+        "lintErrorsLevelB": [],
+        "lintErrorsLevelC": [],
+        "lintErrorCount": 0,
+        "lintErrors": [],
+        "failureAnnotations": [
+          {
+            "ruleId": "parse/json",
+            "layer": "L4/Parse",
+            "category": "parse",
+            "severity": "error",
+            "message": "Use of malformed files detected (Structure Score: 0.50)"
+          }
+        ],
+        "sandboxManifest": {
+          "entry": "main.js",
+          "filesMounted": [
+            "index.html",
+            "main.js"
+          ],
+          "fileHashes": {
+            "index.html": "c72ce6b47a5a90f54e58282f6edefffb8779ce2469ad687b6ccccecc3ad60a87",
+            "main.js": "6ccac03ef8783120bda2962a12cf6fe76a18087c1625793e8261dd729f66ab49"
+          },
+          "generatedAt": "2026-01-26T21:00:45.536Z"
+        },
+        "timeTracking": {
+          "predictedMs": 60000,
+          "actualMs": 34855.6,
+          "completedInPredictedTime": true,
+          "startTime": "2026-01-26T21:00:31.452Z",
+          "endTime": "2026-01-26T21:00:45.547Z"
+        }
+      },
+      "evalTokens": 1668
+    },
+    {
+      "taskId": "m_task",
+      "size": "M",
+      "finalResult": {
+        "totalScore": 41,
+        "scoreBreakdown": {
+          "static": {
+            "completeness": 1,
+            "structure": 0.5,
+            "survivability": 0.9,
+            "connectivity": 0.6166666666666667,
+            "connectivityBreakdown": {
+              "fileReference": 1,
+              "scriptBinding": 0,
+              "apiSchemaLinkage": 0.85,
+              "routeConsistency": 0
+            },
+            "lintErrorsLevelA": [],
+            "lintErrorsLevelB": [],
+            "lintErrorsLevelC": [],
+            "lintErrorCount": 0,
+            "lintErrors": [],
+            "failureAnnotations": [
+              {
+                "ruleId": "parse/json",
+                "layer": "L4/Parse",
+                "category": "parse",
+                "severity": "error",
+                "message": "Use of malformed files detected (Structure Score: 0.50)"
+              },
+              {
+                "ruleId": "connectivity/schema",
+                "layer": "L3/StaticValidation",
+                "category": "connectivity",
+                "severity": "warning",
+                "message": "API keys found but case-mismatched (StrictSchema=0.5)"
+              }
+            ],
+            "sandboxManifest": {
+              "entry": "index.html",
+              "filesMounted": [
+                "index.html",
+                "api.json"
+              ],
+              "fileHashes": {
+                "index.html": "9e62c2ab85c22c44ef8d1293f6c48326fbc6f8b5845bf43ace89645efea6589b",
+                "api.json": "2fdafd4b353b4379d4f2f8f80b0b6060882ea3e795ecbaa408c48314303381d2"
+              },
+              "generatedAt": "2026-01-26T21:06:19.620Z"
+            },
+            "timeTracking": {
+              "predictedMs": 120000,
+              "actualMs": 273112.2,
+              "completedInPredictedTime": false,
+              "startTime": "2026-01-26T21:00:45.547Z",
+              "endTime": "2026-01-26T21:06:19.621Z"
+            }
+          },
+          "runtime": 0.2
+        },
+        "notes": [
+          "Failure classified as L4/Parse",
+          "Score capped at 50"
+        ],
+        "errors": [
+          "L4/Parse: Use of malformed files detected (Structure Score: 0.50)"
+        ],
+        "recommendedFixes": [],
+        "failureLayer": "L4/Parse",
+        "runtimeReport": {
+          "errorCount": 0.9,
+          "warningCount": 0.2,
+          "examples": [
+            "Error: Fetch API cannot load file:///C:/Users/27832/AppData/Local/Temp/tmp-40840-pJ1ZfLa3lKl6/api.json. URL scheme \"file\" is not supported."
+          ]
+        },
+        "failureAnnotations": [
+          {
+            "ruleId": "parse/json",
+            "layer": "L4/Parse",
+            "category": "parse",
+            "severity": "error",
+            "message": "Use of malformed files detected (Structure Score: 0.50)"
+          },
+          {
+            "ruleId": "connectivity/schema",
+            "layer": "L3/StaticValidation",
+            "category": "connectivity",
+            "severity": "warning",
+            "message": "API keys found but case-mismatched (StrictSchema=0.5)"
+          }
+        ]
+      },
+      "staticScore": {
+        "completeness": 1,
+        "structure": 0.5,
+        "survivability": 0.9,
+        "connectivity": 0.6166666666666667,
+        "connectivityBreakdown": {
+          "fileReference": 1,
+          "scriptBinding": 0,
+          "apiSchemaLinkage": 0.85,
+          "routeConsistency": 0
+        },
+        "lintErrorsLevelA": [],
+        "lintErrorsLevelB": [],
+        "lintErrorsLevelC": [],
+        "lintErrorCount": 0,
+        "lintErrors": [],
+        "failureAnnotations": [
+          {
+            "ruleId": "parse/json",
+            "layer": "L4/Parse",
+            "category": "parse",
+            "severity": "error",
+            "message": "Use of malformed files detected (Structure Score: 0.50)"
+          },
+          {
+            "ruleId": "connectivity/schema",
+            "layer": "L3/StaticValidation",
+            "category": "connectivity",
+            "severity": "warning",
+            "message": "API keys found but case-mismatched (StrictSchema=0.5)"
+          }
+        ],
+        "sandboxManifest": {
+          "entry": "index.html",
+          "filesMounted": [
+            "index.html",
+            "api.json"
+          ],
+          "fileHashes": {
+            "index.html": "9e62c2ab85c22c44ef8d1293f6c48326fbc6f8b5845bf43ace89645efea6589b",
+            "api.json": "2fdafd4b353b4379d4f2f8f80b0b6060882ea3e795ecbaa408c48314303381d2"
+          },
+          "generatedAt": "2026-01-26T21:06:19.620Z"
+        },
+        "timeTracking": {
+          "predictedMs": 120000,
+          "actualMs": 273112.2,
+          "completedInPredictedTime": false,
+          "startTime": "2026-01-26T21:00:45.547Z",
+          "endTime": "2026-01-26T21:06:19.621Z"
+        }
+      },
+      "evalTokens": 20765.6
+    },
+    {
+      "taskId": "l_task",
+      "size": "L",
+      "finalResult": {
+        "totalScore": 36,
+        "scoreBreakdown": {
+          "static": {
+            "completeness": 0.8,
+            "structure": 0.3,
+            "survivability": 0.4,
+            "connectivity": 0.3125,
+            "lintErrorsLevelA": [],
+            "lintErrorsLevelB": [],
+            "lintErrorsLevelC": [],
+            "lintErrors": [],
+            "lintErrorCount": 0,
+            "failureAnnotations": [],
+            "timeTracking": {
+              "predictedMs": 300000,
+              "actualMs": 260061.2,
+              "completedInPredictedTime": false,
+              "startTime": "2026-01-26T21:06:23.182Z",
+              "endTime": "2026-01-26T21:12:51.417Z"
+            }
+          },
+          "runtime": null
+        },
+        "notes": [
+          "All validation checks passed"
+        ],
+        "errors": [],
+        "recommendedFixes": [],
+        "runtimeReport": {
+          "errorCount": 1,
+          "warningCount": 0,
+          "examples": []
+        },
+        "failureAnnotations": []
+      },
+      "staticScore": {
+        "completeness": 0.8,
+        "structure": 0.3,
+        "survivability": 0.4,
+        "connectivity": 0.3125,
+        "lintErrorsLevelA": [],
+        "lintErrorsLevelB": [],
+        "lintErrorsLevelC": [],
+        "lintErrors": [],
+        "lintErrorCount": 0,
+        "failureAnnotations": [],
+        "timeTracking": {
+          "predictedMs": 300000,
+          "actualMs": 260061.2,
+          "completedInPredictedTime": false,
+          "startTime": "2026-01-26T21:06:23.182Z",
+          "endTime": "2026-01-26T21:12:51.417Z"
+        }
+      },
+      "evalTokens": 15895
+    },
+    {
+      "taskId": "xl_task",
+      "size": "XL",
+      "finalResult": {
+        "totalScore": 31,
+        "scoreBreakdown": {
+          "static": {
+            "completeness": 0.45,
+            "structure": 0.15,
+            "survivability": 0.2,
+            "connectivity": 0.125,
+            "lintErrorsLevelA": [],
+            "lintErrorsLevelB": [],
+            "lintErrorsLevelC": [],
+            "lintErrors": [],
+            "lintErrorCount": 0,
+            "failureAnnotations": []
+          },
+          "runtime": 0.2
+        },
+        "notes": [
+          "All validation checks passed",
+          "Infrastructure Timeout Triggered"
+        ],
+        "errors": [],
+        "recommendedFixes": [],
+        "runtimeReport": {
+          "errorCount": 0.1,
+          "warningCount": 0,
+          "examples": []
+        },
+        "failureAnnotations": [],
+        "infrastructureTimeout": true
+      },
+      "staticScore": {
+        "completeness": 0.45,
+        "structure": 0.15,
+        "survivability": 0.2,
+        "connectivity": 0.125,
+        "lintErrorsLevelA": [],
+        "lintErrorsLevelB": [],
+        "lintErrorsLevelC": [],
+        "lintErrors": [],
+        "lintErrorCount": 0,
+        "failureAnnotations": []
+      },
+      "evalTokens": 4470.1
+    }
+  ]
+}

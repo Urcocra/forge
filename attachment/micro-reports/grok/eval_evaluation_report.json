@@ -1,0 +1,775 @@
+{
+  "summary": {
+    "overallScore": 67.8,
+    "evalTokensTotal": 0,
+    "eciTotal": 0,
+    "esgDisclosure": {
+      "methodologyVersion": "1.0.0-frozen",
+      "definition": {
+        "metricName": "Eval Compute Index (ECI)",
+        "formula": "ECI = (EvalTokens * ParameterScale) / 10000",
+        "unit": "Dimensionless Index (Linear Proxy for Eval-Time Compute)"
+      },
+      "principles": {
+        "orthogonality": "ECI is mathematically orthogonal to Quality Score. High ECI != Low Quality.",
+        "nonPunitive": "ECI is a disclosure of cost, not a penalty on performance.",
+        "reproducibility": "ECI implies instantaneous evaluation cost, assuming deterministic token usage."
+      },
+      "freezingDeclaration": "This methodology is empirically validated and frozen. No runtime parameters affect this definition."
+    },
+    "breakdown": [
+      {
+        "taskId": "xs_task",
+        "size": "XS",
+        "score": 60,
+        "weight": 0.5999999999999999
+      },
+      {
+        "taskId": "s_task",
+        "size": "S",
+        "score": 80,
+        "weight": 0.7999999999999999
+      },
+      {
+        "taskId": "m_task",
+        "size": "M",
+        "score": 69,
+        "weight": 1
+      },
+      {
+        "taskId": "l_task",
+        "size": "L",
+        "score": 73,
+        "weight": 1.1999999999999997
+      },
+      {
+        "taskId": "xl_task",
+        "size": "XL",
+        "score": 59,
+        "weight": 1.4000000000000001
+      }
+    ],
+    "esgBreakdown": [],
+    "weights": {
+      "XS": 0.5999999999999999,
+      "S": 0.7999999999999999,
+      "M": 1,
+      "L": 1.1999999999999997,
+      "XL": 1.4000000000000001
+    },
+    "esg": {
+      "parameterScale": null,
+      "score": 0
+    }
+  },
+  "config": {
+    "model": "x-ai/grok-4",
+    "parameterScale": null
+  },
+  "results": [
+    {
+      "taskId": "xs_task",
+      "size": "XS",
+      "finalResult": {
+        "totalScore": 60,
+        "scoreBreakdown": {
+          "static": {
+            "completeness": 1,
+            "structure": 1,
+            "survivability": 1,
+            "connectivity": 1,
+            "connectivityBreakdown": {
+              "fileReference": 1,
+              "scriptBinding": 0,
+              "apiSchemaLinkage": 1,
+              "routeConsistency": 0
+            },
+            "lintErrorsLevelA": [],
+            "lintErrorsLevelB": [],
+            "lintErrorsLevelC": [],
+            "lintErrorCount": 0,
+            "lintErrors": [],
+            "failureAnnotations": [],
+            "sandboxManifest": {
+              "entry": "index.html",
+              "filesMounted": [
+                "index.html"
+              ],
+              "fileHashes": {
+                "index.html": "297d24497941925bf3aa13629bc5f33d64f858bb42c57cad6e620e75b536063b"
+              },
+              "generatedAt": "2026-01-26T21:00:47.157Z"
+            },
+            "timeTracking": {
+              "predictedMs": 30000,
+              "actualMs": 27387.8,
+              "completedInPredictedTime": true,
+              "startTime": "2026-01-26T21:00:19.445Z",
+              "endTime": "2026-01-26T21:00:47.157Z"
+            }
+          },
+          "runtime": null
+        },
+        "notes": [
+          "All validation checks passed"
+        ],
+        "errors": [],
+        "recommendedFixes": [],
+        "runtimeReport": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "examples": []
+        },
+        "failureAnnotations": []
+      },
+      "staticScore": {
+        "completeness": 1,
+        "structure": 1,
+        "survivability": 1,
+        "connectivity": 1,
+        "connectivityBreakdown": {
+          "fileReference": 1,
+          "scriptBinding": 0,
+          "apiSchemaLinkage": 1,
+          "routeConsistency": 0
+        },
+        "lintErrorsLevelA": [],
+        "lintErrorsLevelB": [],
+        "lintErrorsLevelC": [],
+        "lintErrorCount": 0,
+        "lintErrors": [],
+        "failureAnnotations": [],
+        "sandboxManifest": {
+          "entry": "index.html",
+          "filesMounted": [
+            "index.html"
+          ],
+          "fileHashes": {
+            "index.html": "297d24497941925bf3aa13629bc5f33d64f858bb42c57cad6e620e75b536063b"
+          },
+          "generatedAt": "2026-01-26T21:00:47.157Z"
+        },
+        "timeTracking": {
+          "predictedMs": 30000,
+          "actualMs": 27387.8,
+          "completedInPredictedTime": true,
+          "startTime": "2026-01-26T21:00:19.445Z",
+          "endTime": "2026-01-26T21:00:47.157Z"
+        }
+      },
+      "evalTokens": 2655.3
+    },
+    {
+      "taskId": "s_task",
+      "size": "S",
+      "finalResult": {
+        "totalScore": 80,
+        "scoreBreakdown": {
+          "static": {
+            "completeness": 1,
+            "structure": 1,
+            "survivability": 1,
+            "connectivity": 0.8,
+            "connectivityBreakdown": {
+              "fileReference": 1,
+              "scriptBinding": 0.6,
+              "apiSchemaLinkage": 1,
+              "routeConsistency": 0
+            },
+            "lintErrorsLevelA": [],
+            "lintErrorsLevelB": [],
+            "lintErrorsLevelC": [],
+            "lintErrorCount": 0,
+            "lintErrors": [],
+            "failureAnnotations": [
+              {
+                "ruleId": "connectivity/binding",
+                "layer": "L3/StaticValidation",
+                "category": "connectivity",
+                "severity": "warning",
+                "message": "No DOM selectors found in JS or IDs/Classes in HTML"
+              }
+            ],
+            "sandboxManifest": {
+              "entry": "main.js",
+              "filesMounted": [
+                "index.html",
+                "main.js"
+              ],
+              "fileHashes": {
+                "index.html": "b902530a6429c8478d0ba0f576c387dc6eda49a743c07337edb40d8900324bb8",
+                "main.js": "db7339f2bc926254358a6b63022d13884448564e67ddb82cf67b9d824b7267d9"
+              },
+              "generatedAt": "2026-01-26T21:01:09.847Z"
+            },
+            "timeTracking": {
+              "predictedMs": 60000,
+              "actualMs": 28734.1,
+              "completedInPredictedTime": true,
+              "startTime": "2026-01-26T21:00:47.158Z",
+              "endTime": "2026-01-26T21:01:09.856Z"
+            }
+          },
+          "runtime": null
+        },
+        "notes": [
+          "All validation checks passed"
+        ],
+        "errors": [],
+        "recommendedFixes": [],
+        "runtimeReport": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "examples": []
+        },
+        "failureAnnotations": [
+          {
+            "ruleId": "connectivity/binding",
+            "layer": "L3/StaticValidation",
+            "category": "connectivity",
+            "severity": "warning",
+            "message": "No DOM selectors found in JS or IDs/Classes in HTML"
+          }
+        ]
+      },
+      "staticScore": {
+        "completeness": 1,
+        "structure": 1,
+        "survivability": 1,
+        "connectivity": 0.8,
+        "connectivityBreakdown": {
+          "fileReference": 1,
+          "scriptBinding": 0.6,
+          "apiSchemaLinkage": 1,
+          "routeConsistency": 0
+        },
+        "lintErrorsLevelA": [],
+        "lintErrorsLevelB": [],
+        "lintErrorsLevelC": [],
+        "lintErrorCount": 0,
+        "lintErrors": [],
+        "failureAnnotations": [
+          {
+            "ruleId": "connectivity/binding",
+            "layer": "L3/StaticValidation",
+            "category": "connectivity",
+            "severity": "warning",
+            "message": "No DOM selectors found in JS or IDs/Classes in HTML"
+          }
+        ],
+        "sandboxManifest": {
+          "entry": "main.js",
+          "filesMounted": [
+            "index.html",
+            "main.js"
+          ],
+          "fileHashes": {
+            "index.html": "b902530a6429c8478d0ba0f576c387dc6eda49a743c07337edb40d8900324bb8",
+            "main.js": "db7339f2bc926254358a6b63022d13884448564e67ddb82cf67b9d824b7267d9"
+          },
+          "generatedAt": "2026-01-26T21:01:09.847Z"
+        },
+        "timeTracking": {
+          "predictedMs": 60000,
+          "actualMs": 28734.1,
+          "completedInPredictedTime": true,
+          "startTime": "2026-01-26T21:00:47.158Z",
+          "endTime": "2026-01-26T21:01:09.856Z"
+        }
+      },
+      "evalTokens": 2780.7
+    },
+    {
+      "taskId": "m_task",
+      "size": "M",
+      "finalResult": {
+        "totalScore": 69,
+        "scoreBreakdown": {
+          "static": {
+            "completeness": 1,
+            "structure": 1,
+            "survivability": 0.1,
+            "connectivity": 0.18333333333333335,
+            "connectivityBreakdown": {
+              "fileReference": 0.5,
+              "scriptBinding": 0,
+              "apiSchemaLinkage": 0.05,
+              "routeConsistency": 0
+            },
+            "lintErrorsLevelA": [],
+            "lintErrorsLevelB": [],
+            "lintErrorsLevelC": [],
+            "lintErrorCount": 0,
+            "lintErrors": [],
+            "failureAnnotations": [
+              {
+                "ruleId": "connectivity/link",
+                "layer": "L3/StaticValidation",
+                "category": "connectivity",
+                "severity": "warning",
+                "message": "No explicit references to required files found, but generic links exist. Missing: api.json"
+              },
+              {
+                "ruleId": "connectivity/schema",
+                "layer": "L3/StaticValidation",
+                "category": "connectivity",
+                "severity": "error",
+                "message": "None of the keys in api.json are referenced in code",
+                "evidence": {
+                  "expected": "openapi, info, servers, paths, components",
+                  "observed": "None"
+                }
+              }
+            ],
+            "sandboxManifest": {
+              "entry": "index.html",
+              "filesMounted": [
+                "index.html",
+                "api.json"
+              ],
+              "fileHashes": {
+                "index.html": "9d098797f87933f0dc93f8e0022bcaab60b12a7a7b53c827abec993f4b4dd685",
+                "api.json": "e4cc071f7e8e2f54184887884e79f9f77e776068149d328eecfa0bd46a75ea0f"
+              },
+              "generatedAt": "2026-01-26T21:02:17.002Z"
+            },
+            "timeTracking": {
+              "predictedMs": 120000,
+              "actualMs": 65857.5,
+              "completedInPredictedTime": true,
+              "startTime": "2026-01-26T21:01:09.857Z",
+              "endTime": "2026-01-26T21:02:17.002Z"
+            }
+          },
+          "runtime": 0.8
+        },
+        "notes": [
+          "Failure classified as L3/StaticValidation",
+          "Score capped at 70"
+        ],
+        "errors": [
+          "L3/StaticValidation: None of the keys in api.json are referenced in code"
+        ],
+        "recommendedFixes": [],
+        "failureLayer": "L3/StaticValidation",
+        "runtimeReport": {
+          "errorCount": 0.4,
+          "warningCount": 0,
+          "examples": []
+        },
+        "failureAnnotations": [
+          {
+            "ruleId": "connectivity/link",
+            "layer": "L3/StaticValidation",
+            "category": "connectivity",
+            "severity": "warning",
+            "message": "No explicit references to required files found, but generic links exist. Missing: api.json"
+          },
+          {
+            "ruleId": "connectivity/schema",
+            "layer": "L3/StaticValidation",
+            "category": "connectivity",
+            "severity": "error",
+            "message": "None of the keys in api.json are referenced in code",
+            "evidence": {
+              "expected": "openapi, info, servers, paths, components",
+              "observed": "None"
+            }
+          }
+        ]
+      },
+      "staticScore": {
+        "completeness": 1,
+        "structure": 1,
+        "survivability": 0.1,
+        "connectivity": 0.18333333333333335,
+        "connectivityBreakdown": {
+          "fileReference": 0.5,
+          "scriptBinding": 0,
+          "apiSchemaLinkage": 0.05,
+          "routeConsistency": 0
+        },
+        "lintErrorsLevelA": [],
+        "lintErrorsLevelB": [],
+        "lintErrorsLevelC": [],
+        "lintErrorCount": 0,
+        "lintErrors": [],
+        "failureAnnotations": [
+          {
+            "ruleId": "connectivity/link",
+            "layer": "L3/StaticValidation",
+            "category": "connectivity",
+            "severity": "warning",
+            "message": "No explicit references to required files found, but generic links exist. Missing: api.json"
+          },
+          {
+            "ruleId": "connectivity/schema",
+            "layer": "L3/StaticValidation",
+            "category": "connectivity",
+            "severity": "error",
+            "message": "None of the keys in api.json are referenced in code",
+            "evidence": {
+              "expected": "openapi, info, servers, paths, components",
+              "observed": "None"
+            }
+          }
+        ],
+        "sandboxManifest": {
+          "entry": "index.html",
+          "filesMounted": [
+            "index.html",
+            "api.json"
+          ],
+          "fileHashes": {
+            "index.html": "9d098797f87933f0dc93f8e0022bcaab60b12a7a7b53c827abec993f4b4dd685",
+            "api.json": "e4cc071f7e8e2f54184887884e79f9f77e776068149d328eecfa0bd46a75ea0f"
+          },
+          "generatedAt": "2026-01-26T21:02:17.002Z"
+        },
+        "timeTracking": {
+          "predictedMs": 120000,
+          "actualMs": 65857.5,
+          "completedInPredictedTime": true,
+          "startTime": "2026-01-26T21:01:09.857Z",
+          "endTime": "2026-01-26T21:02:17.002Z"
+        }
+      },
+      "evalTokens": 4549.7
+    },
+    {
+      "taskId": "l_task",
+      "size": "L",
+      "finalResult": {
+        "totalScore": 73,
+        "scoreBreakdown": {
+          "static": {
+            "completeness": 1,
+            "structure": 1,
+            "survivability": 0.2,
+            "connectivity": 0.3,
+            "connectivityBreakdown": {
+              "fileReference": 0.5,
+              "scriptBinding": 0,
+              "apiSchemaLinkage": 0.2,
+              "routeConsistency": 0.5
+            },
+            "lintErrorsLevelA": [],
+            "lintErrorsLevelB": [],
+            "lintErrorsLevelC": [],
+            "lintErrorCount": 0,
+            "lintErrors": [],
+            "failureAnnotations": [
+              {
+                "ruleId": "connectivity/link",
+                "layer": "L3/StaticValidation",
+                "category": "connectivity",
+                "severity": "warning",
+                "message": "No explicit references to required files found, but generic links exist. Missing: routes.json, api.json"
+              },
+              {
+                "ruleId": "connectivity/schema",
+                "layer": "L3/StaticValidation",
+                "category": "connectivity",
+                "severity": "error",
+                "message": "None of the keys in api.json are referenced in code",
+                "evidence": {
+                  "expected": "openapi, info, paths",
+                  "observed": "None"
+                }
+              },
+              {
+                "ruleId": "connectivity/route",
+                "layer": "L3/StaticValidation",
+                "category": "connectivity",
+                "severity": "warning",
+                "message": "routes.json issues: Empty entries. "
+              }
+            ],
+            "sandboxManifest": {
+              "entry": "index.html",
+              "filesMounted": [
+                "index.html",
+                "routes.json",
+                "api.json"
+              ],
+              "fileHashes": {
+                "index.html": "bdfabf3381546501fa1ea2f93a78934be70097ffc917b54bc5b654acfc9e8b2e",
+                "routes.json": "15c6d23c46370477c93642a5729f8a26054084c87f332a0d7e5028c98e26849c",
+                "api.json": "a530ca22612fc11c22ecfbc3439469a4a1b2a0b30c8be989bbe75209983d294d"
+              },
+              "generatedAt": "2026-01-26T21:03:56.896Z"
+            },
+            "timeTracking": {
+              "predictedMs": 300000,
+              "actualMs": 92285.4,
+              "completedInPredictedTime": true,
+              "startTime": "2026-01-26T21:02:18.842Z",
+              "endTime": "2026-01-26T21:03:56.896Z"
+            }
+          },
+          "runtime": 0.3
+        },
+        "notes": [
+          "Failure classified as L3/StaticValidation",
+          "Score capped at 70"
+        ],
+        "errors": [
+          "L3/StaticValidation: None of the keys in api.json are referenced in code"
+        ],
+        "recommendedFixes": [],
+        "failureLayer": "L3/StaticValidation",
+        "runtimeReport": {
+          "errorCount": 2,
+          "warningCount": 0.4,
+          "examples": [
+            "Error: Failed to load resource: net::ERR_FILE_NOT_FOUND",
+            "Warning: [Network] net::ERR_FILE_NOT_FOUND",
+            "...and 4 more errors"
+          ]
+        },
+        "failureAnnotations": [
+          {
+            "ruleId": "connectivity/link",
+            "layer": "L3/StaticValidation",
+            "category": "connectivity",
+            "severity": "warning",
+            "message": "No explicit references to required files found, but generic links exist. Missing: routes.json, api.json"
+          },
+          {
+            "ruleId": "connectivity/schema",
+            "layer": "L3/StaticValidation",
+            "category": "connectivity",
+            "severity": "error",
+            "message": "None of the keys in api.json are referenced in code",
+            "evidence": {
+              "expected": "openapi, info, paths",
+              "observed": "None"
+            }
+          },
+          {
+            "ruleId": "connectivity/route",
+            "layer": "L3/StaticValidation",
+            "category": "connectivity",
+            "severity": "warning",
+            "message": "routes.json issues: Empty entries. "
+          }
+        ]
+      },
+      "staticScore": {
+        "completeness": 1,
+        "structure": 1,
+        "survivability": 0.2,
+        "connectivity": 0.3,
+        "connectivityBreakdown": {
+          "fileReference": 0.5,
+          "scriptBinding": 0,
+          "apiSchemaLinkage": 0.2,
+          "routeConsistency": 0.5
+        },
+        "lintErrorsLevelA": [],
+        "lintErrorsLevelB": [],
+        "lintErrorsLevelC": [],
+        "lintErrorCount": 0,
+        "lintErrors": [],
+        "failureAnnotations": [
+          {
+            "ruleId": "connectivity/link",
+            "layer": "L3/StaticValidation",
+            "category": "connectivity",
+            "severity": "warning",
+            "message": "No explicit references to required files found, but generic links exist. Missing: routes.json, api.json"
+          },
+          {
+            "ruleId": "connectivity/schema",
+            "layer": "L3/StaticValidation",
+            "category": "connectivity",
+            "severity": "error",
+            "message": "None of the keys in api.json are referenced in code",
+            "evidence": {
+              "expected": "openapi, info, paths",
+              "observed": "None"
+            }
+          },
+          {
+            "ruleId": "connectivity/route",
+            "layer": "L3/StaticValidation",
+            "category": "connectivity",
+            "severity": "warning",
+            "message": "routes.json issues: Empty entries. "
+          }
+        ],
+        "sandboxManifest": {
+          "entry": "index.html",
+          "filesMounted": [
+            "index.html",
+            "routes.json",
+            "api.json"
+          ],
+          "fileHashes": {
+            "index.html": "bdfabf3381546501fa1ea2f93a78934be70097ffc917b54bc5b654acfc9e8b2e",
+            "routes.json": "15c6d23c46370477c93642a5729f8a26054084c87f332a0d7e5028c98e26849c",
+            "api.json": "a530ca22612fc11c22ecfbc3439469a4a1b2a0b30c8be989bbe75209983d294d"
+          },
+          "generatedAt": "2026-01-26T21:03:56.896Z"
+        },
+        "timeTracking": {
+          "predictedMs": 300000,
+          "actualMs": 92285.4,
+          "completedInPredictedTime": true,
+          "startTime": "2026-01-26T21:02:18.842Z",
+          "endTime": "2026-01-26T21:03:56.896Z"
+        }
+      },
+      "evalTokens": 6051.1
+    },
+    {
+      "taskId": "xl_task",
+      "size": "XL",
+      "finalResult": {
+        "totalScore": 59,
+        "scoreBreakdown": {
+          "static": {
+            "completeness": 1,
+            "structure": 0.85,
+            "survivability": 0.2,
+            "connectivity": 0.3,
+            "connectivityBreakdown": {
+              "fileReference": 0.45,
+              "scriptBinding": 0,
+              "apiSchemaLinkage": 0.3,
+              "routeConsistency": 0.45
+            },
+            "lintErrorsLevelA": [],
+            "lintErrorsLevelB": [],
+            "lintErrorsLevelC": [],
+            "lintErrorCount": 0,
+            "lintErrors": [],
+            "failureAnnotations": [
+              {
+                "ruleId": "connectivity/link",
+                "layer": "L3/StaticValidation",
+                "category": "connectivity",
+                "severity": "warning",
+                "message": "No explicit references to required files found, but generic links exist. Missing: routes.json, api.json, ci.yaml"
+              },
+              {
+                "ruleId": "connectivity/route",
+                "layer": "L3/StaticValidation",
+                "category": "connectivity",
+                "severity": "warning",
+                "message": "routes.json issues: Empty entries. "
+              }
+            ],
+            "sandboxManifest": {
+              "entry": "index.html",
+              "filesMounted": [
+                "index.html",
+                "routes.json",
+                "api.json",
+                "ci.yaml"
+              ],
+              "fileHashes": {
+                "index.html": "52afef326b80b18a7035f533cff979f475c458dcb437ab13cb9ad2462fd25e3d",
+                "routes.json": "8abce404f4d4494a8a0b589461623f94a38bdee9f256d85bc1b6828fa0db965a",
+                "api.json": "bbe7a5944c8305508094121a31cbbbdd8023a80dee371ee08cffaddebc5b45f1",
+                "ci.yaml": "52c65a65288d234267a061e9286f560787fc1c93abeefacb7ae6f52ed7e7b49a"
+              },
+              "generatedAt": "2026-01-26T21:09:08.620Z"
+            },
+            "timeTracking": {
+              "predictedMs": 600000,
+              "actualMs": 278841.1,
+              "completedInPredictedTime": true,
+              "startTime": "2026-01-26T21:03:59.237Z",
+              "endTime": "2026-01-26T21:09:08.621Z"
+            }
+          },
+          "runtime": 0.7
+        },
+        "notes": [
+          "All validation checks passed"
+        ],
+        "errors": [],
+        "recommendedFixes": [],
+        "runtimeReport": {
+          "errorCount": 2,
+          "warningCount": 1.7,
+          "examples": []
+        },
+        "failureAnnotations": [
+          {
+            "ruleId": "connectivity/link",
+            "layer": "L3/StaticValidation",
+            "category": "connectivity",
+            "severity": "warning",
+            "message": "No explicit references to required files found, but generic links exist. Missing: routes.json, api.json, ci.yaml"
+          },
+          {
+            "ruleId": "connectivity/route",
+            "layer": "L3/StaticValidation",
+            "category": "connectivity",
+            "severity": "warning",
+            "message": "routes.json issues: Empty entries. "
+          }
+        ]
+      },
+      "staticScore": {
+        "completeness": 1,
+        "structure": 0.85,
+        "survivability": 0.2,
+        "connectivity": 0.3,
+        "connectivityBreakdown": {
+          "fileReference": 0.45,
+          "scriptBinding": 0,
+          "apiSchemaLinkage": 0.3,
+          "routeConsistency": 0.45
+        },
+        "lintErrorsLevelA": [],
+        "lintErrorsLevelB": [],
+        "lintErrorsLevelC": [],
+        "lintErrorCount": 0,
+        "lintErrors": [],
+        "failureAnnotations": [
+          {
+            "ruleId": "connectivity/link",
+            "layer": "L3/StaticValidation",
+            "category": "connectivity",
+            "severity": "warning",
+            "message": "No explicit references to required files found, but generic links exist. Missing: routes.json, api.json, ci.yaml"
+          },
+          {
+            "ruleId": "connectivity/route",
+            "layer": "L3/StaticValidation",
+            "category": "connectivity",
+            "severity": "warning",
+            "message": "routes.json issues: Empty entries. "
+          }
+        ],
+        "sandboxManifest": {
+          "entry": "index.html",
+          "filesMounted": [
+            "index.html",
+            "routes.json",
+            "api.json",
+            "ci.yaml"
+          ],
+          "fileHashes": {
+            "index.html": "52afef326b80b18a7035f533cff979f475c458dcb437ab13cb9ad2462fd25e3d",
+            "routes.json": "8abce404f4d4494a8a0b589461623f94a38bdee9f256d85bc1b6828fa0db965a",
+            "api.json": "bbe7a5944c8305508094121a31cbbbdd8023a80dee371ee08cffaddebc5b45f1",
+            "ci.yaml": "52c65a65288d234267a061e9286f560787fc1c93abeefacb7ae6f52ed7e7b49a"
+          },
+          "generatedAt": "2026-01-26T21:09:08.620Z"
+        },
+        "timeTracking": {
+          "predictedMs": 600000,
+          "actualMs": 278841.1,
+          "completedInPredictedTime": true,
+          "startTime": "2026-01-26T21:03:59.237Z",
+          "endTime": "2026-01-26T21:09:08.621Z"
+        }
+      },
+      "evalTokens": 14312
+    }
+  ]
+}

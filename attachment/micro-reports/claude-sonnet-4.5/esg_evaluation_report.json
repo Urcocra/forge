@@ -1,0 +1,42 @@
+{
+  "meta": {
+    "version": "1.0-frozen",
+    "methodology": "Double-Anchored"
+  },
+  "totals": {
+    "evalTokens": 0,
+    "eciIndex": 0
+  },
+  "breakdown": [
+    {
+      "taskId": "xs_task",
+      "evalTokens": 767.2,
+      "parameterScale": 0,
+      "eciIndex": 0
+    },
+    {
+      "taskId": "s_task",
+      "evalTokens": 1432.2,
+      "parameterScale": 0,
+      "eciIndex": 0
+    },
+    {
+      "taskId": "m_task",
+      "evalTokens": 17085.4,
+      "parameterScale": 0,
+      "eciIndex": 0
+    },
+    {
+      "taskId": "l_task",
+      "evalTokens": 34365.8,
+      "parameterScale": 0,
+      "eciIndex": 0
+    },
+    {
+      "taskId": "xl_task",
+      "evalTokens": 49921.6,
+      "parameterScale": 0,
+      "eciIndex": 0
+    }
+  ]
+}
