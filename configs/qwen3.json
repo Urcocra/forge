@@ -1,0 +1,6 @@
+{
+    "model": "qwen/qwen3-coder",
+    "baseUrl": "https://openrouter.ai/api/v1",
+    "parameterScale": 3.5e10,
+    "apiKey": "YOUR_API_KEY"
+}
