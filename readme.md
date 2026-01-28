@@ -54,10 +54,15 @@ forge-core/
    npm install
    ```
 
-3. Configure Environment:
-   Create a `.env` file in the root directory and add your API keys (e.g., for OpenRouter):
-   ```bash
-   OPENROUTER_API_KEY=sk-...
+3. Configure Model:
+   Create a JSON configuration file in `configs/` (e.g., `configs/my-model.json`):
+   ```json
+   {
+     "model": "provider/model-name",
+     "baseUrl": "https://api.provider.com/v1",
+     "apiKey": "your-api-key",
+     "parameterScale": 70000000000
+   }
    ```
 
 ### Configuration
@@ -77,6 +82,9 @@ To run the FORGE benchmark:
 # Run the FORGE CLI
 npm run forge
 ```
+
+For a complete list of commands (including `batch`, `reproduce`, `eval-report`), see the [**CLI Documentation**](docs/CLI.md).
+
 
 The process involves:
 1. **Load Task**: Reads task definitions.
@@ -101,9 +109,23 @@ We welcome contributions to FORGE! Please see our [Contributing Guide](docs/CONT
 
 We explicitly thank the open-source community for the tools that made this framework possible, including [Astro](https://astro.build), [Playwright](https://playwright.dev), and [TailwindCSS](https://tailwindcss.com).
 
+## 📧 Contact
 
+For questions or feedback, please reach out to the authors via GitHub Issues or email at [contact@example.com](mailto:contact@example.com).
+
+## 📚 Citation
+
+If you use FORGE in your research, please cite our paper:
+
+```bibtex
+@article{forge2026,
+  title={FORGE: A Framework for Real-World Generative Engineering Evaluation of AI Agents},
+  author={Anonymous Author},
+  journal={Under Review},
+  year={2026}
+}
+```
 
 ## 📜 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
