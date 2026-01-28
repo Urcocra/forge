@@ -75,10 +75,11 @@ Under the hood, FORGE uses a modular SDK located at `src/lib/sdk/openai.ts`.
 ```typescript
 import { OpenAICompatibleClient } from './sdk/openai';
 
+// Loaded from your config.json
 const client = new OpenAICompatibleClient({
-    baseUrl: process.env.BASE_URL,
-    apiKey: process.env.API_KEY,
-    model: process.env.MODEL
+    baseUrl: config.baseUrl,
+    apiKey: config.apiKey,
+    model: config.model
 });
 ```
 
