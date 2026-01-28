@@ -60,6 +60,15 @@ forge-core/
    OPENROUTER_API_KEY=sk-...
    ```
 
+### Configuration
+
+FORGE supports strictly typed configuration files for defining model endpoints, including custom/local servers (e.g., vLLM, Ollama).
+
+See [**Model Configuration Guide**](docs/model_configuration.md) for details on how to set up:
+- Custom API Endpoints (`baseUrl`)
+- Third-party Providers (OpenRouter, Together AI)
+- Local Inference Servers
+
 ## 💻 Usage
 
 To run the FORGE benchmark:
