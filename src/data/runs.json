@@ -1,0 +1,38 @@
+[
+    {
+        "runId": "anthropic_claude-sonnet-4.5_2026-01-10T23-13-42-882Z",
+        "model": "anthropic/claude-sonnet-4.5",
+        "configPath": "./configs/sonnet4.5.json",
+        "configHash": "bb4a04211b601b3e9bd7ccd77b65f3ea7c78d42b8a94770cdc9b571900d38ba8",
+        "timestamp": "2026-01-10T23:29:37.667Z",
+        "failureLayer": "None",
+        "stdoutHash": "1e129ed445459a5745c019ce8acbdcf8b8df360babc4ecbc5b0a4622676919c8"
+    },
+    {
+        "runId": "moonshotai_kimi-k2-thinking_2026-01-10T22-46-29-577Z",
+        "model": "moonshotai/kimi-k2-thinking",
+        "configPath": "./configs/kimi.json",
+        "configHash": "46d39d6c2b8b0fab5d076968b6af7d3083aaad3f0e217d94c3e40c309e6515d5",
+        "timestamp": "2026-01-10T23:23:29.212Z",
+        "failureLayer": "L4/Parse",
+        "stdoutHash": "8387eb4015c7de29210a5c41e337dd6a07da198f53df0b276336d272fd5e8f04"
+    },
+    {
+        "runId": "minimax_minimax-m2.1_2026-01-10T23-07-41-915Z",
+        "model": "minimax/minimax-m2",
+        "configPath": "./configs/minimax.json",
+        "configHash": "3341e53b93c378372d6871ccf946b21cc54af4c82e3ecdba7edad3d97c841f9e",
+        "timestamp": "2026-01-10T23:20:23.773Z",
+        "failureLayer": "L4/Parse",
+        "stdoutHash": "7a93cdddb0686d7cbe1f518a8a8f4a83fb42920ac92a224e8f1bb9d4b8bcaa5c"
+    },
+    {
+        "runId": "openai_gpt-5.2_2026-01-10T22-51-05-774Z",
+        "model": "openai/gpt-5.2",
+        "configPath": "./configs/gpt5.2.json",
+        "configHash": "edea7467adf3a48334197eaa84742da4abec069d4098d41bbcda7060d4faa984",
+        "timestamp": "2026-01-10T23:14:31.290Z",
+        "failureLayer": "L4/Parse",
+        "stdoutHash": "c73e6fc10aa954b2758f9b03fd1679c18d27080a309640cba94d396f3c0ea9b1"
+    }
+]

@@ -1,0 +1,132 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SelectLog from '../components/SelectLog.astro';
+import { getRuns, getFailureTaxonomy, getFailureCounts } from '../lib/runs';
+
+// 1. Fetch Data
+const runs = await getRuns();
+const runId = Astro.url.searchParams.get('log') ?? runs[0]?.runId ?? null;
+const currentRun = runs.find(r => r.runId === runId);
+
+// 2. Fetch Failure Data
+const taxonomy = runId ? await getFailureTaxonomy(runId) : {};
+const failureCounts = runId ? await getFailureCounts(runId) : {};
+
+// 3. Group Failures by Layer
+const layers = ['L5/BrowserRuntime', 'L4/Parse', 'L3/StaticValidation', 'L2/CodeQuality', 'L1/Warnings', 'L1/Model'];
+const failuresByLayer = layers.reduce((acc, layer) => {
+    acc[layer] = Object.values(taxonomy).filter(f => f.layer === layer);
+    return acc;
+}, {} as Record<string, typeof taxonomy[string][]>);
+---
+
+<Layout title="FORGE · Failures">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold mb-1">Failure Taxonomy</h1>
+        <p class="text-base-content/60 font-serif italic max-w-3xl">
+            Failures in agentic systems are not random noise. They follow a causal hierarchy where higher-layer failures mask lower-layer signals.
+        </p>
+    </div>
+
+    {/* Selection Control */}
+    <div class="card bg-base-100 shadow-sm border border-base-200 mb-4">
+        <div class="card-body py-4">
+             <div>
+                 <span class="text-xs font-bold uppercase tracking-wider opacity-50 block mb-1">Select Run Evidence</span>
+                 <SelectLog selectedRunId={runId} runs={runs} />
+             </div>
+        </div>
+    </div>
+
+    {currentRun && (
+        <>
+            <div class="flex flex-col md:flex-row gap-4 items-center justify-between bg-base-100 p-4 border border-base-200 rounded-box mb-8 shadow-sm">
+                 <div>
+                    <div class="text-lg font-bold">{currentRun.model}</div>
+                    <div class="text-xs font-mono opacity-50">{runId}</div>
+                 </div>
+                 <div>
+                     <button onclick="document.getElementById('json_modal').showModal()" class="btn btn-sm btn-outline gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+                        View JSON
+                     </button>
+                 </div>
+            </div>
+
+            <dialog id="json_modal" class="modal">
+                <div class="modal-box w-11/12 max-w-5xl">
+                    <form method="dialog">
+                        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                    </form>
+                    <h3 class="font-bold text-lg mb-4">Run Metadata (JSON)</h3>
+                    <div class="bg-base-300 p-4 rounded-lg overflow-auto max-h-[60vh]">
+                        <pre class="text-xs font-mono"><code>{JSON.stringify(currentRun, null, 2)}</code></pre>
+                    </div>
+                </div>
+                <form method="dialog" class="modal-backdrop">
+                    <button>close</button>
+                </form>
+            </dialog>
+        </>
+    )}
+
+    {currentRun && (
+        <div class="space-y-8">
+            {layers.map(layer => {
+                const layerFailures = failuresByLayer[layer] || [];
+                if (layerFailures.length === 0) return null;
+
+                return (
+                    <div>
+                        <h3 class="font-bold text-sm uppercase tracking-wider opacity-60 mb-3 border-b border-base-200 pb-1">{layer}</h3>
+                        <div class="border border-base-200 rounded-lg overflow-hidden bg-base-100">
+                             <table class="table table-sm w-full">
+                                <thead class="bg-base-200/50">
+                                    <tr>
+                                        <th class="w-16 text-center">Count</th>
+                                        <th class="w-48">Rule ID</th>
+                                        <th>Details</th>
+                                        <th class="w-24 text-right">Severity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {layerFailures.map(f => {
+                                        const count = failureCounts[f.ruleId] || 0;
+                                        const isActive = count > 0;
+                                        
+                                        return (
+                                            <tr class={isActive ? 'bg-error/5 hover:bg-error/10' : 'opacity-50 hover:opacity-100'}>
+                                                <td class="text-center font-mono">
+                                                    {count > 0 ? (
+                                                        <span class="badge badge-error badge-sm font-bold">{count}</span>
+                                                    ) : (
+                                                        <span class="text-base-content/20">-</span>
+                                                    )}
+                                                </td>
+                                                <td class="font-mono text-xs font-bold">{f.ruleId}</td>
+                                                <td>
+                                                    <div class="text-sm">{f.message}</div>
+                                                    <div class="text-[10px] opacity-50 font-mono mt-0.5">{f.category}</div>
+                                                </td>
+                                                <td class="text-right">
+                                                    <span class={`badge badge-xs ${
+                                                        f.severity === 'critical' ? 'badge-error' :
+                                                        f.severity === 'error' ? 'badge-error badge-outline' :
+                                                        f.severity === 'warning' ? 'badge-warning badge-outline' :
+                                                        'badge-ghost'
+                                                    }`}>
+                                                        {f.severity}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                             </table>
+                        </div>
+                    </div>
+                );
+            })}
+        </div>
+    )}
+</Layout>

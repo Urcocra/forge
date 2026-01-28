@@ -1,0 +1,42 @@
+---
+import type { Run } from '../lib/runs';
+
+interface Props {
+  runs?: Run[];
+  selectedRunId?: string | null;
+}
+
+const runs: Run[] = [...(Astro.props.runs ?? [])].sort((a, b) => 
+  new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+);
+const selectedRunId = Astro.props.selectedRunId ?? null;
+---
+
+<form method="GET" class="mb-4">
+  <div class="flex items-center gap-3">
+    <span class="text-xs uppercase opacity-60 font-mono">
+      Select Log
+    </span>
+
+    {runs.length === 0 ? (
+      <span class="text-xs opacity-50">
+        No runs available
+      </span>
+    ) : (
+      <select
+        name="log"
+        class="select select-sm select-bordered font-mono max-w-md"
+        onchange="this.form.submit()"
+      >
+        {runs.map((run) => (
+          <option
+            value={run.runId}
+            selected={run.runId === selectedRunId}
+          >
+            {run.model} · {new Date(run.timestamp).toLocaleString()}
+          </option>
+        ))}
+      </select>
+    )}
+  </div>
+</form>

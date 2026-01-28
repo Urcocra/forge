@@ -1,0 +1,11 @@
+---
+interface Props {
+  log: string;
+}
+
+const { log } = Astro.props;
+---
+
+<div class="mockup-code bg-base-300 text-base-content overflow-x-auto">
+  <pre class="px-4 py-2 font-mono text-sm leading-relaxed">{log}</pre>
+</div>

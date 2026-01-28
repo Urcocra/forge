@@ -1,0 +1,31 @@
+---
+interface Props {
+  content: string;
+  filename: string;
+}
+
+const { content, filename } = Astro.props;
+const isJson = filename.endsWith('.json');
+---
+
+<div class="card bg-base-100 shadow-xl border border-base-200">
+  <div class="card-body p-0">
+    <div class="flex items-center justify-between p-4 border-b border-base-200 bg-base-200/50 rounded-t-xl">
+      <div class="flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+        <span class="font-bold">{filename}</span>
+        <span class="badge badge-sm badge-ghost">Read-only</span>
+      </div>
+    </div>
+    
+    <div class="p-4 overflow-x-auto max-h-[600px] overflow-y-auto">
+      {isJson ? (
+        <pre class="font-mono text-sm bg-base-300/30 p-4 rounded-lg">{content}</pre>
+      ) : (
+        <div class="prose max-w-none prose-sm">
+          <pre class="whitespace-pre-wrap font-mono text-sm">{content}</pre>
+        </div>
+      )}
+    </div>
+  </div>
+</div>

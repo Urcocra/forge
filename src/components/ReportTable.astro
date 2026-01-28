@@ -1,0 +1,48 @@
+---
+import type { ReportStatus } from '../lib/runs';
+
+interface Props {
+  reports: ReportStatus[];
+  runId: string;
+}
+
+const { reports, runId } = Astro.props;
+---
+
+<div class="overflow-x-auto">
+  <table class="table w-full">
+    <thead>
+      <tr>
+        <th>Report Name</th>
+        <th>Description</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {reports.map((report) => (
+        <tr>
+          <td class="font-bold">{report.name}</td>
+          <td class="opacity-70">{report.description}</td>
+          <td>
+            {report.exists ? (
+              <a 
+                href={`?log=${runId}&report=${report.filename}`} 
+                class="btn btn-sm btn-ghost gap-2 text-success normal-case"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                Preview
+                <span class="text-xs opacity-50 font-normal">({report.filename})</span>
+              </a>
+            ) : (
+               <div class="flex items-center gap-2 text-error/50 px-3 text-sm">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                 Missing
+                 <span class="text-xs opacity-50 font-normal">({report.filename})</span>
+               </div>
+            )}
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>

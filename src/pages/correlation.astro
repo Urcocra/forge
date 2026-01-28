@@ -1,0 +1,239 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+import { getRuns } from '../lib/runs';
+import { EXTERNAL_BENCHMARKS } from '../data/benchmarks';
+import { calculateKendallTau, calculateTauCI } from '../lib/statistics';
+import fs from 'fs';
+import path from 'path';
+
+// 1. Data Aggregation
+interface ModelTaskScore {
+    xs_task: number | null;
+    s_task: number | null;
+    m_task: number | null;
+    l_task: number | null;
+    xl_task: number | null;
+}
+
+const runs = await getRuns();
+const modelScores: Record<string, { [key: string]: number[] }> = {};
+
+// Helper to parse report for task scores
+const getTaskScores = (runId: string): ModelTaskScore => {
+    const scores: ModelTaskScore = { xs_task: null, s_task: null, m_task: null, l_task: null, xl_task: null };
+    try {
+        // Try reading from eval_evaluation_report.json (Best Source)
+        // We assume runId is the dirname in runs/
+        const reportPath = path.resolve(process.cwd(), 'runs', runId, 'eval_evaluation_report.json');
+        
+        if (fs.existsSync(reportPath)) {
+            const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+            if (Array.isArray(report.results)) {
+                for (const result of report.results) {
+                    const taskId = result.taskId;
+                    // Handle score locations: finalResult.totalScore or score in breakdown
+                    let score = null;
+                    if (result.finalResult && typeof result.finalResult.totalScore === 'number') {
+                        score = result.finalResult.totalScore;
+                    } else if (typeof result.score === 'number') {
+                        score = result.score;
+                    }
+
+                    if (score !== null && taskId in scores) {
+                        (scores as any)[taskId] = score;
+                    }
+                }
+            }
+            return scores;
+        }
+
+        // Fallback: Parsing run.json directly if we decide to store task breakdown there? 
+        // No, let's stick to report.json as primary source.
+        
+        // Final fallback: stdout.log regex (Legacy)
+        const logPath = path.resolve(process.cwd(), 'runs', runId, 'stdout.log');
+        if (fs.existsSync(logPath)) {
+            const content = fs.readFileSync(logPath, 'utf8');
+            const taskRegex = /\[TASK_BEGIN\]\s+(\w+)[\s\S]*?Total Score:\s*(\d+)/g;
+            let match;
+            while ((match = taskRegex.exec(content)) !== null) {
+                const taskId = match[1];
+                const score = parseInt(match[2], 10);
+                if (taskId in scores) {
+                    (scores as any)[taskId] = score;
+                }
+            }
+        }
+    } catch (e) {
+        // failed to read
+    }
+    return scores;
+};
+
+// 2. Populate Model Scores
+for (const run of runs) {
+    if (!modelScores[run.model]) modelScores[run.model] = { xs: [], s: [], m: [], l: [], xl: [] };
+    
+    // Parse reports for granular task scores
+    const taskScores = getTaskScores(run.runId);
+    
+    // Map tasks to difficulty levels
+    // Assuming task IDs: xs_task, s_task, m_task, l_task, xl_task map 1:1 to levels
+    if (taskScores.xs_task !== null) modelScores[run.model].xs.push(taskScores.xs_task);
+    if (taskScores.s_task !== null)  modelScores[run.model].s.push(taskScores.s_task);
+    if (taskScores.m_task !== null)  modelScores[run.model].m.push(taskScores.m_task);
+    if (taskScores.l_task !== null)  modelScores[run.model].l.push(taskScores.l_task);
+    if (taskScores.xl_task !== null) modelScores[run.model].xl.push(taskScores.xl_task);
+}
+
+// 3. Compute Correlation Per Level
+interface CorrelationData {
+  level: string;
+  tau: number;
+  ciLow: number;
+  ciHigh: number;
+  note?: string;
+  models: string[];
+}
+
+const levels = [
+    { id: 'xs', name: 'XS' }, 
+    { id: 's', name: 'S' }, 
+    { id: 'm', name: 'M' },
+    { id: 'l', name: 'L' },
+    { id: 'xl', name: 'XL' }
+];
+
+const TAU: CorrelationData[] = [];
+
+for (const level of levels) {
+    const x: number[] = []; // External Benchmark
+    const y: number[] = []; // FORGE Score
+    const contributingModels: string[] = [];
+
+    let sampleCount = 0;
+
+    for (const [model, scoresMap] of Object.entries(modelScores)) {
+        const extScore = EXTERNAL_BENCHMARKS[model];
+        const forgeScores = scoresMap[level.id]; // Array of scores for this level
+
+        // Only include if we have both external benchmark and at least one FORGE run
+        if (typeof extScore === 'number' && forgeScores && forgeScores.length > 0) {
+            // Average the FORGE scores for this model & level
+            const avgForge = forgeScores.reduce((a, b) => a + b, 0) / forgeScores.length;
+            x.push(extScore);
+            y.push(avgForge);
+            contributingModels.push(model);
+            sampleCount++;
+        }
+    }
+
+    if (sampleCount >= 2) {
+        const tau = calculateKendallTau(x, y);
+        const ci = calculateTauCI(tau, sampleCount);
+
+        let note = '';
+        if (tau > 0.7) note = 'Strong agreement';
+        else if (tau < 0.2 && tau > -0.2) note = 'No correlation';
+        else if (tau < -0.2) note = 'Inverted relationship';
+        
+        if (level.id === 'xl' && tau < 0.2) note += ' (Hypothesis verified)';
+
+        TAU.push({
+            level: level.name,
+            tau: isNaN(tau) ? 0 : tau,
+            ciLow: ci.low,
+            ciHigh: ci.high,
+            note,
+            models: contributingModels
+        });
+    } else {
+        // Not enough data
+        TAU.push({ level: level.name, tau: 0, ciLow: 0, ciHigh: 0, note: 'Insufficient data', models: [] });
+    }
+}
+
+function isNotSignificant(ciLow: number, ciHigh: number) {
+    return ciLow <= 0 && ciHigh >= 0;
+}
+---
+
+<Layout title="FORGE · Rank Correlation">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold mb-1">Rank Correlation (Kendall τ)</h1>
+        <p class="text-base-content/60 font-serif italic mb-2">
+            Lower τ indicates weaker rank-order preservation between SWE-style and in-field evaluation.
+        </p>
+        <div class="text-xs text-base-content/40 font-mono">
+            τ ∈ [−1, 1], where 1 = identical ordering, 0 = random, −1 = inverted.
+        </div>
+    </div>
+
+    <div class="card bg-base-100 shadow-sm border border-base-200 overflow-visible mb-8">
+        <div class="px-4 py-2 border-b border-base-200 flex justify-end">
+             <span class="text-[10px] text-base-content/50 uppercase tracking-wider">Color encodes agreement strength</span>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="table table-sm font-mono w-full">
+                <thead>
+                    <tr class="bg-base-200/50">
+                        <th class="w-24">Difficulty</th>
+                        <th class="w-1/3">Kendall τ</th>
+                        <th>95% CI</th>
+                        <th>Trend Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {TAU.map(row => {
+                        const notSig = isNotSignificant(row.ciLow, row.ciHigh);
+                        return (
+                            <tr class="hover">
+                                <td class="font-bold flex items-center gap-2">
+                                    {row.level}
+                                    {row.models.length > 0 && (
+                                        <div class="tooltip tooltip-right" data-tip={row.models.join(', ')}>
+                                            <div class="badge badge-xs badge-ghost opacity-50 cursor-help">{row.models.length}</div>
+                                        </div>
+                                    )}
+                                </td>
+                                <td>
+                                    <div class="flex items-center gap-3">
+                                        <span class="w-12 text-right font-bold">{row.tau.toFixed(2)}</span>
+                                        <progress 
+                                            class={`progress w-32 ${row.tau < 0.2 ? 'progress-warning' : 'progress-primary'} ${row.tau < 0 ? 'progress-error' : ''}`} 
+                                            value={Math.max(0, row.tau)} 
+                                            max="1"
+                                        ></progress>
+                                    </div>
+                                </td>
+                                <td class="opacity-70">
+                                    [{row.ciLow.toFixed(2)}, {row.ciHigh.toFixed(2)}]{notSig ? '*' : ''}
+                                </td>
+                                <td class="text-xs opacity-50 italic">
+                                    {row.note}
+                                </td>
+                            </tr>
+                        );
+                    })}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="px-4 py-2 bg-base-100 border-t border-base-200 text-[10px] opacity-40">
+            *CI overlaps 0 → rank correlation not statistically distinguishable from noise.
+        </div>
+    </div>
+
+    <div class="alert alert-info shadow-sm max-w-2xl">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <div class="flex flex-col gap-1 text-sm">
+            <span class="font-bold">Corollary 1: τ decreases as difficulty increases.</span>
+            <span class="font-bold">Corollary 2: Removing in-field constraints increases τ (ablation).</span>
+            <span class="opacity-70 mt-1">Note: This does not imply model degradation, but loss of ranking transferability.</span>
+            <div class="font-black mt-2">
+                Conclusion: SWE rankings are not order-stable under increasing in-field task complexity.
+            </div>
+        </div>
+    </div>
+</Layout>

@@ -1,0 +1,38 @@
+---
+import Layout from './Layout.astro';
+import SelectLog from '../components/SelectLog.astro';
+import RunMetaStrip from '../components/RunMetaStrip.astro';
+import { getRuns } from '../lib/runs';
+
+interface Props {
+  title: string;
+  subTitle?: string;
+}
+
+const { title, subTitle } = Astro.props;
+const currentLogId = Astro.url.searchParams.get('log');
+const runs = await getRuns();
+const currentRun = runs.find(r => r.runId === currentLogId);
+---
+
+<Layout title={`FORGE · ${title}`}>
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="text-3xl font-bold mb-2">{title}</h1>
+            {subTitle && <p class="text-base-content/60">{subTitle}</p>}
+        </div>
+        <SelectLog selectedRunId={currentLogId} runs={runs} />
+    </div>
+
+    {currentRun ? (
+        <div class="flex flex-col gap-4">
+            <RunMetaStrip run={currentRun} />
+            <slot />
+        </div>
+    ) : (
+        <div class="alert">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span>Please select a log to view the {title.toLowerCase()}.</span>
+        </div>
+    )}
+</Layout>

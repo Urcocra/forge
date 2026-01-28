@@ -1,0 +1,176 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+interface ModelRank {
+  model: string;
+  sweRank: number;
+  rseRank: number;
+  timeRank: number;
+  elapsedSec: number;
+  tag?: { label: string; class: string };
+  failureLayer: string; // L1..L4 or Pass
+}
+
+const models: ModelRank[] = [
+  {
+    model: 'anthropic/claude-sonnet-4.5',
+    sweRank: 1,
+    rseRank: 1,
+    timeRank: 4,
+    elapsedSec: 844,
+    failureLayer: 'L0: Pass'
+  },
+  {
+    model: 'openai/gpt-5.2',
+    sweRank: 2,
+    rseRank: 6,
+    timeRank: 5,
+    elapsedSec: 1192,
+    tag: { label: 'SWE-best but FORGE-low', class: 'badge-error badge-outline' },
+    failureLayer: 'L4: Runtime'
+  },
+  {
+    model: 'qwen/qwen3-coder',
+    sweRank: 3,
+    rseRank: 2,
+    timeRank: 1,
+    elapsedSec: 445,
+    failureLayer: 'L0: Pass'
+  },
+  {
+    model: 'x-ai/grok-4',
+    sweRank: 4,
+    rseRank: 3,
+    timeRank: 2,
+    elapsedSec: 566,
+    failureLayer: 'L0: Pass'
+  },
+  {
+    model: 'moonshotai/kimi-k2-thinking',
+    sweRank: 5,
+    rseRank: 4,
+    timeRank: 6,
+    elapsedSec: 1454,
+    tag: { label: 'FORGE-robust but SWE-mid', class: 'badge-success badge-outline' },
+    failureLayer: 'L0: Pass'
+  },
+  {
+    model: 'minimax/minimax-m2',
+    sweRank: 6,
+    rseRank: 5,
+    timeRank: 3,
+    elapsedSec: 747,
+    failureLayer: 'L4: Runtime'
+  }
+];
+
+// Sort by SWE rank for the table to emphasize the scramble in RSE column
+const sortedModels = [...models].sort((a, b) => a.sweRank - b.sweRank);
+
+function getDelta(m: ModelRank) {
+    // Δ Rank = SWE Rank − FORGE Rank
+    // Positive: SWE(5) - FORGE(3) = 2 (FORGE is better/lower rank) -> Green Up
+    // Negative: SWE(2) - FORGE(6) = -4 (FORGE is worse/higher rank) -> Red Down
+    return m.sweRank - m.rseRank;
+}
+
+function formatDelta(delta: number) {
+    if (delta === 0) return { text: '—', class: 'text-base-content/30' };
+    if (delta > 0) return { text: `↑ ${delta}`, class: 'text-success font-bold' }; // Rank improved
+    return { text: `↓ ${Math.abs(delta)}`, class: 'text-error font-bold' }; // Rank worsened
+}
+
+function getFailureBadge(layer: string) {
+    if (layer === 'L0: Pass') return 'badge-success badge-outline';
+    if (layer.startsWith('L5')) return 'badge-error badge-outline';
+    if (layer.startsWith('L4')) return 'badge-error badge-outline';
+    if (layer.startsWith('L3')) return 'badge-warning badge-outline';
+    if (layer.startsWith('L2')) return 'badge-warning badge-outline'; 
+    return 'badge-ghost opacity-50';
+}
+
+function getTimeBadge(rank: number) {
+    return 'badge-ghost opacity-50'; // Neutral styling for all time ranks
+}
+
+function formatDuration(sec: number) {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${m}m${s}s`;
+}
+---
+
+<Layout title="FORGE · Ranking Disagreement">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold mb-1">FORGE vs SWE Ranking Disagreement</h1>
+        <p class="text-base-content/60 font-serif italic">
+            Same model set, different induced ordering. This page highlights mis-ranking, not model superiority.
+        </p>
+    </div>
+
+    <div class="overflow-x-auto border border-base-200 rounded-lg bg-base-100 shadow-sm">
+        <div class="px-4 py-2 text-xs text-base-content/50 bg-base-100 border-b border-base-200">
+            Lower rank is better. Same model set, different induced ordering.
+        </div>
+        <table class="table table-sm font-mono w-full">
+            <thead>
+                <tr class="bg-base-200/50">
+                    <th class="py-3">Model</th>
+                    <th class="text-center">SWE Rank <span class="text-[10px] font-normal opacity-50 block leading-none">(lower is better)</span></th>
+                    <th class="text-center">FORGE Rank</th>
+                    <th class="text-center">
+                        <div class="tooltip tooltip-bottom" data-tip="Δ Rank = SWE Rank − FORGE Rank. Positive values indicate FORGE ranks the model higher (better).">
+                            <span class="border-b border-dotted cursor-help">Δ Rank</span>
+                        </div>
+                    </th>
+                    <th class="text-center">
+                        <div class="tooltip tooltip-bottom" data-tip="Based on wall-clock time (lower is better)">
+                            <span class="border-b border-dotted cursor-help">Time Rank</span>
+                        </div>
+                    </th>
+                    <th>Tag</th>
+                </tr>
+            </thead>
+            <tbody>
+                {sortedModels.map(m => {
+                    const delta = getDelta(m);
+                    const deltaFmt = formatDelta(delta);
+                    return (
+                        <tr class="hover">
+                            <td class="font-bold">{m.model}</td>
+                            <td class="text-center opacity-70">{m.sweRank}</td>
+                            <td class="text-center font-bold">{m.rseRank}</td>
+                            <td class={`text-center ${deltaFmt.class}`}>{deltaFmt.text}</td>
+                            <td class="text-center">
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <span class="font-mono text-xs opacity-70">{formatDuration(m.elapsedSec)}</span>
+                                    <span class={`badge ${getTimeBadge(m.timeRank)} badge-sm font-bold min-w-[24px]`}>
+                                        {m.timeRank}
+                                    </span>
+                                    <span class="text-[10px] opacity-50 ml-1">⚠ platform</span>
+                                </div>
+                            </td>
+                            <td>
+                                {m.tag && (
+                                    <span class={`badge ${m.tag.class} badge-sm`}>{m.tag.label}</span>
+                                )}
+                            </td>
+                        </tr>
+                    );
+                })}
+            </tbody>
+        </table>
+    </div>
+    <div class="text-[10px] text-base-content/40 mt-1 px-1">
+        Time Rank is reported for transparency only. Execution time is platform- and rate-limit–dependent, and is not an optimization target.
+    </div>
+
+    <div class="mt-8 p-4 bg-base-200/50 rounded-lg text-sm max-w-3xl">
+        <h3 class="font-bold mb-1 opacity-70 uppercase tracking-wider text-xs">Analysis</h3>
+        <p>
+            The drastic re-ordering (avg |Δ| = {((sortedModels.reduce((acc, m) => acc + Math.abs(getDelta(m)), 0)) / sortedModels.length).toFixed(1)} across {sortedModels.length} models) suggests that capabilities measured by SWE-bench (code generation isolation) do not linearly translate to FORGE performance (end-to-end agentic robustness).
+            Models like <span class="font-mono">{models.find(m => m.tag?.label.includes('FORGE-robust'))?.model}</span> show resilience despite lower "intelligence" benchmarks, while <span class="font-mono">{models.find(m => m.tag?.label.includes('SWE-best'))?.model}</span> suffers from fragility in L4/L3 layers.
+            See <a href="/correlation" class="link">/correlation</a> for rank-order statistics and <a href="/failures" class="link">/failures</a> for root-cause taxonomy. All conclusions remain unchanged when time-based signals are excluded.
+        </p>
+    </div>
+</Layout>

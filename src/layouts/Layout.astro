@@ -1,0 +1,42 @@
+---
+import Sidebar from '../components/Sidebar.astro';
+const { title } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <title>{title}</title>
+    <link rel="stylesheet" href="/src/styles/global.css" />
+  </head>
+
+  <body class="bg-base-100 text-base-content h-screen overflow-hidden">
+    <div class="drawer lg:drawer-open h-full">
+      <input id="my-drawer" type="checkbox" class="drawer-toggle" />
+
+      <!-- 右侧主内容（slot） -->
+      <div class="drawer-content flex flex-col h-full overflow-auto">
+        <!-- Mobile Navbar -->
+        <div class="navbar bg-base-300 lg:hidden">
+          <div class="flex-none">
+            <label for="my-drawer" class="btn btn-square btn-ghost">
+              ☰
+            </label>
+          </div>
+          <div class="flex-1 px-2">FORGE</div>
+        </div>
+
+        <main class="p-6 max-w-7xl mx-auto w-full">
+          <slot />
+        </main>
+      </div>
+
+      <!-- 左侧 Sidebar（关键修复点） -->
+      <div class="drawer-side h-full z-40">
+        <label for="my-drawer" class="drawer-overlay"></label>
+        <Sidebar />
+      </div>
+    </div>
+  </body>
+</html>

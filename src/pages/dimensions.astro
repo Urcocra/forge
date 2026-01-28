@@ -1,0 +1,118 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getRuns, getRunDimensions, type RunDimensions } from '../lib/runs';
+
+// 1. Data Fetching & Aggregation
+const runs = await getRuns();
+
+// Group by model
+const modelGroups = runs.reduce((acc, run) => {
+    if (!acc[run.model]) acc[run.model] = [];
+    acc[run.model].push(run);
+    return acc;
+}, {} as Record<string, typeof runs>);
+
+// Load dimensions for all runs
+interface AggregatedDimensions {
+    model: string;
+    count: number;
+    score: number | null;
+    ECI: number | null;
+    failures: {
+        l1: number;
+        l2: number;
+        l3: number;
+        l4: number;
+        l5: number;
+    };
+}
+
+const tableData: AggregatedDimensions[] = [];
+
+for (const [model, modelRuns] of Object.entries(modelGroups)) {
+    const dimPromises = modelRuns.map(r => getRunDimensions(r.runId));
+    const dims = await Promise.all(dimPromises);
+    
+    // Average non-null values
+    const avg = (key: 'score' | 'ECI') => {
+        const values = dims.map(d => d[key]).filter((v): v is number => typeof v === 'number');
+        if (values.length === 0) return null;
+        return values.reduce((a, b) => a + b, 0) / values.length;
+    };
+
+    // Sum failures then average
+    const avgFailure = (key: 'l1'|'l2'|'l3'|'l4'|'l5') => {
+        const values = dims.map(d => d.failures?.[key] ?? 0);
+        if (values.length === 0) return 0;
+        return values.reduce((a, b) => a + b, 0) / values.length;
+    };
+
+    tableData.push({
+        model,
+        count: modelRuns.length,
+        score: avg('score'),
+        ECI: avg('ECI'),
+        failures: {
+            l1: avgFailure('l1'),
+            l2: avgFailure('l2'),
+            l3: avgFailure('l3'),
+            l4: avgFailure('l4'),
+            l5: avgFailure('l5'),
+        }
+    });
+}
+
+// Helper for display
+const fmt = (v: number | null, fixed=1) => (v === null ? '—' : v.toFixed(fixed));
+---
+
+<Layout title="FORGE · Metrics Analysis">
+    <div class="mb-12">
+        <h1 class="text-3xl font-bold mb-1">Metrics Analysis</h1>
+        <p class="text-base-content/70 font-serif text-lg italic">
+            Performance (Score) vs Cost (ECI) vs Failure Distribution.
+        </p>
+    </div>
+
+    {/* Main Table */}
+    <div class="overflow-x-auto border border-base-200 rounded-lg bg-base-100 shadow-sm mb-12">
+        <table class="table table-md w-full">
+            <thead>
+                <tr class="bg-base-200/50">
+                    <th class="align-bottom pb-4">Model</th>
+                    <th class="align-bottom pb-4 text-center w-32">Avg Score<br/><span class="text-[9px] opacity-50 font-normal">0-100</span></th>
+                    <th class="align-bottom pb-4 text-center w-32">Avg ECI<br/><span class="text-[9px] opacity-50 font-normal">Cost</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                {tableData.length === 0 ? (
+                    <tr><td colspan="3" class="text-center py-8 opacity-50">No run data available.</td></tr>
+                ) : tableData.sort((a,b) => (b.score||0) - (a.score||0)).map(row => (
+                    <tr class="hover group">
+                        <td class="font-bold">
+                            <div class="flex flex-col">
+                                <span>{row.model}</span>
+                                <span class="text-xs font-normal opacity-50 font-mono">{row.count} runs</span>
+                            </div>
+                        </td>
+                        <td class="text-center font-mono font-bold text-lg">{fmt(row.score, 1)}</td>
+                        <td class="text-center font-mono">{fmt(row.ECI, 2)}</td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    </div>
+
+    {/* Definitions */}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 opacity-60 text-sm">
+        <div class="border border-base-200 p-4 rounded-lg">
+            <h3 class="font-bold mb-1">ECI (Eval Compute Index)</h3>
+            <p>(Tokens × Params) / 10k. A proxy for the computational cost of the evaluation.</p>
+        </div>
+        <div class="border border-base-200 p-4 rounded-lg">
+            <h3 class="font-bold mb-1">Total Score</h3>
+            <p>The standard functional correctness score (0-100) achieved on the task.</p>
+        </div>
+
+    </div>
+</Layout>

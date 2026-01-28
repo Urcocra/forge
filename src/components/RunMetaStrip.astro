@@ -1,0 +1,39 @@
+---
+import type { Run } from '../lib/runs';
+
+interface Props {
+  run: Run;
+}
+
+const { run } = Astro.props;
+
+function formatDate(timestamp: string) {
+  try {
+    return new Date(timestamp).toLocaleString();
+  } catch (e) {
+    return timestamp;
+  }
+}
+---
+
+<div class="flex flex-wrap items-center gap-4 p-2 bg-base-200 rounded-lg text-sm">
+  <div class="flex items-center gap-2">
+    <span class="font-bold opacity-60">Model:</span>
+    <span class="badge badge-neutral">{run.model}</span>
+  </div>
+  
+  <div class="flex items-center gap-2" title={run.runId}>
+    <span class="font-bold opacity-60">ID:</span>
+    <span class="font-mono text-xs opacity-80 cursor-help border-b border-dashed border-base-content/30">{run.runId.substring(0, 16)}...</span>
+  </div>
+
+  <div class="flex items-center gap-2">
+      <span class="font-bold opacity-60">Failure Layer:</span>
+      <span class="badge badge-outline">{run.failureLayer}</span>
+  </div>
+
+  <div class="flex items-center gap-2 ml-auto">
+    <span class="font-bold opacity-60">Executed:</span>
+    <span>{formatDate(run.timestamp)}</span>
+  </div>
+</div>

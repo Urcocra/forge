@@ -1,0 +1,57 @@
+---
+import type { ArtifactDiffResult } from '../lib/runs';
+
+interface Props {
+  diffs: Record<string, ArtifactDiffResult>;
+}
+
+const { diffs } = Astro.props;
+const tasks = Object.keys(diffs);
+---
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  {tasks.map(taskId => {
+    const diff = diffs[taskId];
+    return (
+      <div class="card bg-base-100 shadow-sm border border-base-200">
+        <div class="card-body p-4">
+          <h3 class="card-title text-sm font-mono opacity-60 uppercase">{taskId}</h3>
+          
+          <div class="flex flex-col gap-2 mt-2">
+            
+            {/* Matching */}
+            {diff.matching.map(file => (
+               <div class="flex items-center gap-2 text-xs opacity-60">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 stroke-success" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                 <span class="font-mono">{file}</span>
+               </div>
+            ))}
+
+            {/* Missing */}
+            {diff.missing.map(file => (
+               <div class="flex items-center gap-2 text-xs">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 stroke-error" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                 <span class="font-mono font-bold text-error">{file}</span>
+                 <span class="badge badge-xs badge-error badge-outline">Missing</span>
+               </div>
+            ))}
+
+            {/* Extra */}
+            {diff.extra.map(file => (
+               <div class="flex items-center gap-2 text-xs">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 stroke-warning" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                 <span class="font-mono text-warning opacity-80">{file}</span>
+                 <span class="badge badge-xs badge-warning badge-outline">Extra</span>
+               </div>
+             ))}
+
+             {diff.matching.length === 0 && diff.missing.length === 0 && diff.extra.length === 0 && (
+                <div class="text-xs opacity-40 italic">No artifacts data</div>
+             )}
+
+          </div>
+        </div>
+      </div>
+    );
+  })}
+</div>

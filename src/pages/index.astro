@@ -1,0 +1,145 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getRuns } from '../lib/runs';
+
+// Fetch runs on build/request
+const allRuns = await getRuns();
+const recentRuns = allRuns.slice(0, 3);
+const runCount = allRuns.length;
+
+function getOutcomeBadge(layer?: string | null): { class: string; label: string } {
+  if (!layer || layer === 'None' || layer === 'No failure observed') return { class: 'badge-success badge-outline', label: 'L0: Pass' };
+  if (layer.startsWith('L5')) return { class: 'badge-error badge-outline', label: 'L5: Env' };
+  if (layer.startsWith('L4')) return { class: 'badge-error badge-outline', label: 'L4: Runtime' };
+  if (layer.startsWith('L3')) return { class: 'badge-warning badge-outline', label: 'L3: Static' };
+  if (layer.startsWith('L2')) return { class: 'badge-warning badge-outline', label: 'L2: Code' };
+  if (layer.startsWith('L1')) return { class: 'badge-ghost badge-outline', label: 'L1: Quality' };
+  return { class: 'badge-ghost badge-outline', label: layer };
+}
+
+function shortId(id: string) {
+    return id.split('_').slice(-1)[0] ?? id; // simple heuristic or just truncate
+}
+---
+
+<Layout title="FORGE v1 Dashboard">
+    
+    <!-- 1) HeroSummary -->
+    <div class="card bg-base-100 shadow-sm border border-base-200 mb-8">
+        <div class="card-body">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h1 class="card-title text-2xl font-black tracking-tight mb-2">FORGE v1 Dashboard</h1>
+                    <p class="text-base-content/80 font-serif text-lg max-w-3xl">
+                        Static SWE-style benchmarks systematically mis-rank models compared to in-field, project-based evaluation.
+                    </p>
+                </div>
+            </div>
+            <div class="flex flex-wrap gap-2 mt-4">
+                <div class="badge badge-neutral">Fully automated</div>
+                <div class="badge badge-neutral">No human-in-loop</div>
+                <div class="badge badge-neutral">Reproducible</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <!-- 2) ExperimentFacts -->
+        <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider opacity-50 mb-4">Experiment Facts</h3>
+            <div class="overflow-x-auto border border-base-200 rounded-lg">
+                <table class="table table-sm">
+                    <tbody>
+                        <tr>
+                            <th class="opacity-70 font-normal">Task Set</th>
+                            <td class="font-mono text-right">XS – XL</td>
+                        </tr>
+                        <tr>
+                            <th class="opacity-70 font-normal">Models</th>
+                            <td class="font-mono text-right">6</td>
+                        </tr>
+                        <tr>
+                            <th class="opacity-70 font-normal">Repeats</th>
+                            <td class="font-mono text-right">3×</td>
+                        </tr>
+                        <tr>
+                            <th class="opacity-70 font-normal">Runs recorded</th>
+                            <td class="font-mono text-right">{runCount}</td>
+                        </tr>
+                        <tr>
+                            <th class="opacity-70 font-normal">Interface</th>
+                            <td class="font-mono text-right">OpenRouter</td>
+                        </tr>
+                        <tr>
+                            <th class="opacity-70 font-normal">Artifacts</th>
+                            <td class="font-mono text-right text-xs">runs/** (run.json, stdout.log, esg-report.json)</td>
+                        </tr>
+                        <tr>
+                            <th class="opacity-70 font-normal">Time Metric</th>
+                            <td class="font-mono text-right">Wall-clock (end-to-end)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 3) KeyClaims -->
+        <div>
+             <h3 class="text-xs font-bold uppercase tracking-wider opacity-50 mb-4">Key Claims</h3>
+             <ul class="space-y-3">
+                <li class="flex items-start gap-2">
+                    <span class="text-primary font-bold">1.</span>
+                    <span class="text-sm">Ranking disagreement (FORGE vs SWE-style)</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <span class="text-primary font-bold">2.</span>
+                    <span class="text-sm">Failure-layer taxonomy (L0–L5)</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <span class="text-primary font-bold">3.</span>
+                    <span class="text-sm">One-command reproduction (CLI + UI wrapper)</span>
+                </li>
+             </ul>
+
+             <!-- 4) EvidenceLinks -->
+             <div class="mt-6">
+                 <div class="text-[10px] opacity-40 uppercase tracking-widest mb-1">Jump to fixed evidence views (aggregate)</div>
+                 <div class="flex flex-wrap gap-3">
+                     <a href="/ranking" class="btn btn-sm btn-outline">/ranking</a>
+                     <a href="/correlation" class="btn btn-sm btn-outline">/correlation</a>
+                     <a href="/failures" class="btn btn-sm btn-outline">/failures</a>
+                     <a href="/dimensions" class="btn btn-sm btn-outline">/dimensions</a>
+                     <a href="/reports" class="btn btn-sm btn-outline">/reports</a>
+                     <a href="/reproduce" class="btn btn-sm btn-outline">/reproduce</a>
+                 </div>
+             </div>
+        </div>
+    </div>
+
+    <!-- 5) LatestRunsMini -->
+    <div>
+        <h3 class="text-xs font-bold uppercase tracking-wider opacity-50 mb-4">Latest Runs</h3>
+        
+        {recentRuns.length === 0 ? (
+            <div class="alert bg-base-200/50 border-none rounded-lg text-sm font-mono opacity-70">
+                <span>no runs yet—run forge CLI first</span>
+            </div>
+        ) : (
+            <div class="grid grid-cols-1 gap-3">
+                {recentRuns.map(run => {
+                    const badge = getOutcomeBadge(run.failureLayer);
+                    return (
+                        <div class="flex items-center justify-between p-3 bg-base-100 border border-base-200 rounded-lg hover:border-base-300 transition-colors">
+                            <div class="flex flex-col gap-1">
+                                <span class="font-bold text-sm">{run.model}</span>
+                                <span class="text-xs font-mono opacity-50">{shortId(run.runId)}</span>
+                            </div>
+                            <div class={`badge ${badge.class} badge-sm`}>{badge.label}</div>
+                        </div>
+                    );
+                })}
+            </div>
+        )}
+    </div>
+
+</Layout>

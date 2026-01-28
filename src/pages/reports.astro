@@ -1,0 +1,248 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SelectLog from '../components/SelectLog.astro';
+import { getRuns, getReportAvailability, getReportContent, getRun, getFailureDetails, getRunDimensions } from '../lib/runs';
+import { Marked } from 'marked';
+import { markedHighlight } from "marked-highlight";
+import markedKatex from "marked-katex-extension";
+import hljs from 'highlight.js';
+import { Liquid } from 'liquidjs';
+import 'highlight.js/styles/github-dark.css';
+import 'katex/dist/katex.min.css';
+
+// 1. Fetch Data
+const runs = await getRuns();
+const runId = Astro.url.searchParams.get('log') ?? runs[0]?.runId ?? null;
+const urlViewFile = Astro.url.searchParams.get('view');
+
+// 2. Fetch Report List
+const reports = runId ? await getReportAvailability(runId) : [];
+
+// 3. Determine Active View (Auto-select first available if URL param is missing)
+let activeViewFile = urlViewFile;
+if (!activeViewFile && reports.length > 0) {
+    const defaultReport = reports.find(r => r.exists) ?? reports[0];
+    activeViewFile = defaultReport?.filename ?? null;
+}
+
+// 4. Fetch Specific Content if requested
+const content = (runId && activeViewFile) ? await getReportContent(runId, activeViewFile) : null;
+const selectedReportMeta = reports.find(r => r.filename === activeViewFile);
+
+// 5. Fetch Run Context for Templates
+const runData = runId ? await getRun(runId) : null;
+const failureDetails = runId ? await getFailureDetails(runId) : null;
+const dimensions = runId ? await getRunDimensions(runId) : null;
+
+// 6. Configure Markdown Parser (Instance-based to prevent plugin stacking)
+const marked = new Marked(
+    markedHighlight({
+        langPrefix: 'hljs language-',
+        highlight(code, lang) {
+            const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+            return hljs.highlight(code, { language }).value;
+        }
+    }),
+    markedKatex({ throwOnError: false })
+);
+
+let contentHtml = null;
+if (content) {
+    const engine = new Liquid();
+    
+    // Construct rich context matching both template styles
+    const context = {
+        // Direct object access
+        run: runData,
+        model: { id: runData?.model },
+        esg: { 
+            score: typeof dimensions?.ECI === 'number' ? dimensions.ECI : 0, 
+            parameterScale: runData?.parameterScale ?? 'N/A' 
+        },
+        meta: { generatedAt: runData?.timestamp },
+        static: {
+            completeness: 0,
+            structure: 0,
+            survivability: 0,
+            connectivity: 0
+        },
+        
+        // Flat variables (Legacy/Current Template Support)
+        ModelID: runData?.model,
+        RunID: runData?.runId,
+        EvalTokens: 0, // Placeholder as per current data availability
+        ParameterScaleLabel: runData?.parameterScale ?? 'N/A',
+        ParameterMultiplier: 0,
+        EsgRaw: typeof dimensions?.ECI === 'number' ? dimensions.ECI : 0,
+        EsgNormalized: 0,
+        
+        // Dynamic Data
+        runtimeExternalAccess: [],
+        
+        // New Metrics
+        Score: typeof dimensions?.score === 'number' ? dimensions.score : 0,
+        ECI: typeof dimensions?.ECI === 'number' ? dimensions.ECI : 0,
+        Failures: dimensions?.failures ?? { l1:0, l2:0, l3:0, l4:0, l5:0 },
+
+        ...selectedReportMeta
+    };
+    const rendered = await engine.parseAndRender(content, context);
+    contentHtml = await marked.parse(rendered, { breaks: true, gfm: true });
+}
+
+// Helper for Data URI (Download support)
+function toDataUri(content: string | null, type = 'text/plain') {
+    if (!content) return '#';
+    const b64 = Buffer.from(content).toString('base64');
+    return `data:${type};base64,${b64}`;
+}
+---
+
+<Layout title="FORGE · Reports">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold mb-1">Reports & Evidence</h1>
+        <p class="text-base-content/60 font-serif italic max-w-3xl">
+            Immutable, auto-generated evidence artifacts. These documents are the primary source of truth for evaluation claims.
+        </p>
+    </div>
+
+    {/* Selection Control */}
+    <div class="card bg-base-100 shadow-sm border border-base-200 mb-8">
+        <div class="card-body py-4">
+             <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                 <div>
+                     <span class="text-xs font-bold uppercase tracking-wider opacity-50 block mb-1">Select Run</span>
+                     <SelectLog selectedRunId={runId} runs={runs} />
+                 </div>
+                 
+                 {/* Stats */}
+                 <div class="flex gap-4 text-xs font-mono opacity-60">
+                     <div>Available: {reports.filter(r => r.exists).length}</div>
+                     <div>Missing: {reports.filter(r => !r.exists).length}</div>
+                 </div>
+             </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        {/* Left: Availability Table */}
+        <div class="lg:col-span-5 space-y-6">
+            <h3 class="text-xs font-bold uppercase tracking-wider opacity-50 mb-2">Available Artifacts</h3>
+            
+            {reports.length === 0 ? (
+                <div class="alert text-sm">No run selected.</div>
+            ) : (
+                <div class="border border-base-200 rounded-lg overflow-hidden">
+                    <table class="table table-sm w-full bg-base-100">
+                        <thead class="bg-base-200/50">
+                            <tr>
+                                <th>Status</th>
+                                <th>Report / Description</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {reports.map(r => (
+                                <tr class={r.filename === activeViewFile ? 'bg-base-200/50' : 'hover'}>
+                                    <td class="w-12 text-center">
+                                        {r.exists ? (
+                                            <span class="text-success text-lg">✓</span>
+                                        ) : (
+                                            <span class="text-base-content/20 text-lg">✗</span>
+                                        )}
+                                    </td>
+                                    <td>
+                                        <div class="font-bold text-sm">{r.name}</div>
+                                        <div class="text-[10px] opacity-60 font-mono">{r.description}</div>
+                                    </td>
+                                    <td class="text-right">
+                                        {r.exists ? (
+                                            <a 
+                                                href={`/reports?log=${runId}&view=${r.filename}`}
+                                                class={`btn btn-xs ${r.filename === activeViewFile ? 'btn-neutral' : 'btn-ghost border-base-200'}`}
+                                            >
+                                                View
+                                            </a>
+                                        ) : (
+                                            <div class="flex flex-col items-end gap-1">
+                                                <span class="text-xs opacity-30 italic">N/A</span>
+                                                <div class="text-[8px] font-mono text-error/50 max-w-[200px] break-all leading-tight text-right">
+                                                    {r.path}<br/>
+                                                    {r.error}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+
+            {/* Evidence Integrity Note (Fixed Footer) */}
+            <div class="alert shadow-sm rounded-lg items-start border border-base-200 bg-base-100/50">
+                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5 opacity-50 mt-1" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                <div class="text-xs text-base-content/70">
+                    <h3 class="font-bold mb-1">Evidence Integrity</h3>
+                    <p>These reports are mechanically generated at the end of execution. They are strictly read-only and have not been post-processed or edited by humans.</p>
+                </div>
+            </div>
+        </div>
+
+        {/* Right: Content Viewer */}
+        <div class="lg:col-span-7">
+            {(activeViewFile || selectedReportMeta) ? (
+                <div class="card bg-base-100 border border-base-200 h-full flex flex-col shadow-lg">
+                    {/* Viewer Header */}
+                    <div class="p-4 border-b border-base-200 bg-base-200/30 flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                            <span class="font-bold text-sm">{selectedReportMeta?.name ?? 'Report Filter'}</span>
+                        </div>
+                        <div class="flex gap-2">
+                            {/* Download Button (Data URI) */}
+                            {content && (
+                                <a 
+                                    href={toDataUri(content)} 
+                                    download={selectedReportMeta?.filename}
+                                    class="btn btn-xs btn-outline gap-1"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                                    Download
+                                </a>
+                            )}
+                            <a href={`/reports?log=${runId}`} class="btn btn-xs btn-ghost btn-square" aria-label="Close">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    {/* Content View */}
+                    <div class="flex-grow bg-base-100 p-0 overflow-auto min-h-[500px] relative">
+                        {contentHtml ? (
+                            <div class="prose prose-sm max-w-none p-8" set:html={contentHtml}></div>
+                        ) : (
+                            <div class="flex flex-col items-center justify-center h-full opacity-30 gap-2">
+
+                                <span class="loading loading-spinner loading-lg"></span>
+                                <span class="text-sm">Unable to load content or empty file.</span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            ) : (
+                // Empty State for Right Column
+                <div class="h-full flex flex-col items-center justify-center border-2 border-dashed border-base-200 rounded-lg p-12 opacity-40">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    <div class="text-center">
+                        <div class="font-bold">No Report Selected</div>
+                        <div class="text-sm">Select an available report from the list to view its contents.</div>
+                    </div>
+                </div>
+            )}
+        </div>
+
+    </div>
+</Layout>

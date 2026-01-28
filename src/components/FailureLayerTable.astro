@@ -1,0 +1,48 @@
+---
+import type { FailureDetails } from '../lib/runs';
+
+interface Props {
+  details: FailureDetails;
+}
+
+const { details } = Astro.props;
+
+// Defined order: L5 -> L1
+const rows = [
+  { id: 'L5 Env', desc: 'Browser/Infra failure', count: details['L5 Env'] },
+  { id: 'L4 Runtime', desc: 'Execution/Sandbox failure', count: details['L4 Runtime'] },
+  { id: 'L3 Static', desc: 'Contract/Syntax failure', count: details['L3 Static'] },
+  { id: 'L2 Code', desc: 'Logic/Code errors', count: details['L2 Code'] },
+  { id: 'L1 Quality', desc: 'Soft quality issues', count: details['L1 Quality'] },
+];
+---
+
+<div class="overflow-x-auto">
+  <table class="table w-full">
+    <thead>
+      <tr>
+        <th>Layer</th>
+        <th>Description</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map(row => (
+        <tr class={row.count > 0 ? 'bg-error/10' : ''}>
+          <td class="font-bold">{row.id}</td>
+          <td class="opacity-70">{row.desc}</td>
+          <td>
+            {row.count > 0 ? (
+               <div class="badge badge-error gap-2">
+                 Tainted
+                 <span class="font-mono bg-error-content/10 px-1 rounded text-xs">{row.count}</span>
+               </div>
+            ) : (
+                <div class="badge badge-ghost opacity-50">Clean</div>
+            )}
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
