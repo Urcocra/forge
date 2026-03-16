@@ -2,8 +2,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-const MICRO_REPORTS_DIR = path.join(process.cwd(), 'attachment', 'micro-reports');
-const OUTPUT_FILE = path.join(process.cwd(), 'model_averaged_report.md');
+const ROOT_DIR = path.resolve(__dirname, '..');
+const MICRO_REPORTS_DIR = path.join(ROOT_DIR, 'attachment', 'micro-reports');
+const OUTPUT_FILE = path.join(ROOT_DIR, 'model_averaged_report.md');
 
 // Define the order and display names for models
 const MODELS = [
@@ -19,6 +20,12 @@ const MODELS = [
 const TASKS = ['xs_task', 's_task', 'm_task', 'l_task', 'xl_task'];
 
 async function main() {
+    if (!fs.existsSync(MICRO_REPORTS_DIR)) {
+        console.error(`Micro-reports directory not found: ${MICRO_REPORTS_DIR}`);
+        process.exitCode = 1;
+        return;
+    }
+
     let markdownContent = `# Averaged Model Performance Report\n`;
     markdownContent += `Generated: ${new Date().toLocaleString()}\n\n`;
 
@@ -123,4 +130,7 @@ async function main() {
     console.log(`Successfully generated ${OUTPUT_FILE}`);
 }
 
-main();
+main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+});

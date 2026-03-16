@@ -5,7 +5,11 @@ The FORGE CLI is the primary interface for running evaluations, generating repor
 ## Global Usage
 
 ```bash
-npm run forge -- <command> [options]
+# Show CLI help
+npm run forge
+
+# Run commands from a local clone
+node -r ts-node/register forge/index.ts <command> [options]
 ```
 
 or if installed globally/linked:
@@ -13,6 +17,8 @@ or if installed globally/linked:
 ```bash
 forge <command> [options]
 ```
+
+The local `npm run forge -- <command>` form does not forward arguments correctly in this repository's current script setup. Use the direct CLI entry above for local runs.
 
 ## Commands
 
@@ -52,13 +58,16 @@ forge compare
 ```
 
 ### `report`
-Generates a human-readable HTML/Markdown report for a specific run.
+Generates a Markdown micro report for a specific run.
 
 ```bash
 forge report <run_dir>
 ```
 - **Arguments**:
   - `<run_dir>`: Path to the run directory.
+
+- **Output**:
+  - `micro-report.md`
 
 ### `esg`
 Generates the Engineering Systems Grammar (ESG) analysis for a run. This computes the structural integrity and complexity scores.
@@ -68,6 +77,22 @@ forge esg <run_dir>
 ```
 - **Arguments**:
   - `<run_dir>`: Path to the run directory.
+
+- **Output**:
+  - `esg_report.json`
+  - `esg_evaluation_report.md`
+
+### `esg-report`
+Generates only the Markdown ESG report for a run that already contains `esg_report.json`.
+
+```bash
+forge esg-report <run_dir>
+```
+- **Arguments**:
+  - `<run_dir>`: Path to the run directory.
+
+- **Output**:
+  - `esg_evaluation_report.md`
 
 ### `eval-report`
 Generates the detailed Evaluation Report (`eval_evaluation_report.md`) for a run, combining scores, logs, and failure analysis.

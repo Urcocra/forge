@@ -16,14 +16,14 @@ node -v  # Should be >= 18.x
 
 ## 2. Re-run Statistical Analysis
 
-The FERPS dimensions (F, E, R, P, S) are calculated deterministically from raw logs. You can re-run this calculation to verify the scores reported in Table 3 of the paper.
+Derived run metadata can be regenerated from raw logs and evaluation reports. You can re-run this step to refresh score, token, and failure-summary fields used by downstream scripts.
 
 ```bash
-# Calculate dimensions and update run.json files
-npx tsx scripts/calc_scientific_dims.ts
+# Recompute derived metadata and update run.json files
+npx ts-node scripts/recompute_run_metadata.ts
 ```
 
-*Output*: This will scan all `runs/` and update `run.json` with rigorous F, E, R, P, S scores based on the formulas in `stats-details.md`.
+*Output*: This will scan all `runs/` and update `run.json` with derived score, ECI, and failure summary fields.
 
 ## 3. Generate Aggregated Reports
 
@@ -31,10 +31,10 @@ After calculating dimensions, regenerate the markdown reports used for the paper
 
 ```bash
 # Generate the Model Averaged Report (Source of Table 3)
-npx tsx generate_averaged_model_report.ts
+npx ts-node scripts/generate_averaged_model_report.ts
 ```
 
-*Artifact*: Checks `model_averaged_report.md` for the updated tables.
+*Artifact*: The intended output file is `scripts/model_averaged_report.md`, but this script currently resolves `runs/` relative to `scripts/` and may require a path fix before it can be re-run successfully from a clean clone.
 
 ## 4. Full Audit (Optional)
 
@@ -42,5 +42,5 @@ To verify the integrity of all files and dependencies:
 
 ```bash
 # Run the audit script
-npx tsx verify_audit.ts
+npx ts-node scripts/verify_audit.ts
 ```

@@ -15,7 +15,6 @@ Existing benchmarks frequently overestimate the capabilities of AI agents by eva
 - **Real-World Task Complexity**: Evaluates agents on complete project construction, not just single functions.
 - **Sandboxed Execution**: Runs generated code in isolated environments to test actual runtime behavior.
 - **Failure Taxonomy**: Detailed categorization of failure modes, from static errors to runtime crashes (L1-L5 layers).
-- **FERPS Framework**: Evaluation based on Functional, Engineering, Resilience, Product, and Situatedness criteria.
 - **Transparent Reporting**: Generates detailed, reproducible reports on agent performance and failure modes.
 
 ## 🛠️ Project Structure
@@ -79,9 +78,14 @@ See [**Model Configuration Guide**](docs/model_configuration.md) for details on 
 To run the FORGE benchmark:
 
 ```bash
-# Run the FORGE CLI
+# Show CLI help
 npm run forge
+
+# Run a benchmark from a local clone
+node -r ts-node/register forge/index.ts run --config configs/qwen3.json
 ```
+
+The local `npm run forge -- <command>` form does not forward arguments correctly in this repository's current script setup. Use the direct CLI entry above for local runs, or `forge <command>` if you installed/linked the package globally.
 
 For a complete list of commands (including `batch`, `reproduce`, `eval-report`), see the [**CLI Documentation**](docs/CLI.md).
 
@@ -90,11 +94,19 @@ The process involves:
 1. **Load Task**: Reads task definitions.
 2. **Execute**: Runs the agent to generate artifacts.
 3. **Evaluate**: Performs static analysis and runtime execution in the sandbox.
-4. **Report**: Outputs scores and failure analysis to the `reports/` directory.
+4. **Report**: Outputs logs, scores, and generated reports to a new subdirectory under `runs/`.
 
 ### Viewing Reports
 
-Results are generated in the `reports/` directory. You can also view the summarized findings in `model_averaged_report.md`.
+Each execution creates a directory under `runs/`, for example `runs/qwen_qwen3-coder_2026-03-16T02-15-25-366Z/`.
+
+Key generated files include:
+- `run.json`
+- `stdout.log`
+- `stderr.log`
+- `esg_evaluation_report.md`
+- `eval_evaluation_report.md`
+- `failure_taxonomy_report.md`
 
 ## 🤝 Contributing
 
@@ -103,7 +115,6 @@ We welcome contributions to FORGE! Please see our [Contributing Guide](docs/CONT
 ## ❓ Troubleshooting
 
 -   **Browser Crashes**: If you experience browser crashes during evaluation, ensure you have the necessary Playwright dependencies installed (`npx playwright install-deps`).
--   **Timeout Errors**: For complex tasks, you may need to increase the timeout settings in `configs/runtime.json`.
 
 ## 🙏 Acknowledgements
 

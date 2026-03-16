@@ -2,7 +2,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-const RUNS_DIR = path.resolve(process.cwd(), 'runs');
+const ROOT_DIR = path.resolve(__dirname, '..');
+const RUNS_DIR = path.join(ROOT_DIR, 'runs');
+const OUTPUT_FILE = path.join(ROOT_DIR, 'latex_stats.txt');
 
 // Map model IDs (from directory/run.json) to display names for LaTeX
 // Adjust keys based on actual model names found in runs
@@ -36,7 +38,8 @@ interface AggregatedStats {
 function main() {
     if (!fs.existsSync(RUNS_DIR)) {
         console.error('Runs directory not found:', RUNS_DIR);
-        process.exit(1);
+        process.exitCode = 1;
+        return;
     }
 
     const entries = fs.readdirSync(RUNS_DIR, { withFileTypes: true });
@@ -44,7 +47,8 @@ function main() {
 
     if (runDirs.length === 0) {
         console.error('No run directories found.');
-        process.exit(1);
+        process.exitCode = 1;
+        return;
     }
 
     const modelStats: Record<string, RunStats[]> = {};
@@ -132,8 +136,8 @@ function main() {
     }).join(' ');
     output += `\\addplot[fill=red!30] coordinates {${runtimeCoords}};\n`;
 
-    fs.writeFileSync('latex_stats.txt', output);
-    console.log('Wrote stats to latex_stats.txt');
+    fs.writeFileSync(OUTPUT_FILE, output);
+    console.log(`Wrote stats to ${OUTPUT_FILE}`);
 }
 
 main();

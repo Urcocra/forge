@@ -2,6 +2,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+const ROOT_DIR = path.resolve(__dirname, '..');
+const MICRO_REPORTS_DIR = path.join(ROOT_DIR, 'attachment', 'micro-reports');
+
 // --- Data ---
 const EXTERNAL_BENCHMARKS: Record<string, number> = {
     'anthropic/claude-sonnet-4.5': 65.0,
@@ -71,13 +74,18 @@ function calculateKendallTau(x: number[], y: number[]): number {
 
 // --- Main ---
 async function main() {
-    const microReportsDir = path.join(process.cwd(), 'attachment', 'micro-reports');
+    if (!fs.existsSync(MICRO_REPORTS_DIR)) {
+        console.error(`Micro-reports directory not found: ${MICRO_REPORTS_DIR}`);
+        process.exitCode = 1;
+        return;
+    }
+
     const modelScores: Record<string, Record<string, number>> = {};
 
     // 1. Gather Scores
     for (const dirName of Object.keys(DIR_TO_ID)) {
         const modelId = DIR_TO_ID[dirName];
-        const reportPath = path.join(microReportsDir, dirName, 'eval_evaluation_report.json');
+        const reportPath = path.join(MICRO_REPORTS_DIR, dirName, 'eval_evaluation_report.json');
 
         if (fs.existsSync(reportPath)) {
             try {
@@ -140,4 +148,7 @@ async function main() {
     console.log('};');
 }
 
-main();
+main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+});

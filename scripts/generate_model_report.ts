@@ -1,8 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 
-const RUNS_DIR = path.resolve(__dirname, 'runs');
-const OUTPUT_FILE = path.resolve(__dirname, 'model_events_report.md');
+const ROOT_DIR = path.resolve(__dirname, '..');
+const RUNS_DIR = path.join(ROOT_DIR, 'runs');
+const OUTPUT_FILE = path.join(ROOT_DIR, 'model_events_report.md');
 
 interface RunMeta {
     runId: string;
@@ -65,7 +66,11 @@ function processRun(runDir: string): RunDetail | null {
 }
 
 async function main() {
-    if (!fs.existsSync(RUNS_DIR)) return;
+    if (!fs.existsSync(RUNS_DIR)) {
+        console.error(`Runs directory not found: ${RUNS_DIR}`);
+        process.exitCode = 1;
+        return;
+    }
 
     const runDirs = fs.readdirSync(RUNS_DIR).filter(d => fs.statSync(path.join(RUNS_DIR, d)).isDirectory());
 
@@ -151,4 +156,7 @@ async function main() {
     console.log(`Model report generated at ${OUTPUT_FILE}`);
 }
 
-main();
+main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+});

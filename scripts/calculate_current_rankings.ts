@@ -2,7 +2,8 @@
 import fs from 'fs';
 import path from 'path';
 
-const RUNS_DIR = path.join(process.cwd(), 'runs');
+const ROOT_DIR = path.resolve(__dirname, '..');
+const RUNS_DIR = path.join(ROOT_DIR, 'runs');
 
 const MODEL_PREFIXES = [
     'anthropic_claude',
@@ -21,6 +22,12 @@ interface ModelStats {
 }
 
 function main() {
+    if (!fs.existsSync(RUNS_DIR)) {
+        console.error(`Runs directory not found: ${RUNS_DIR}`);
+        process.exitCode = 1;
+        return;
+    }
+
     const entries = fs.readdirSync(RUNS_DIR, { withFileTypes: true });
     const allRuns = entries.filter(e => e.isDirectory()).map(e => e.name);
 

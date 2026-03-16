@@ -15,6 +15,12 @@ const models = [
 ];
 
 function main() {
+    if (!fs.existsSync(RUNS_DIR)) {
+        console.error(`Runs directory not found: ${RUNS_DIR}`);
+        process.exitCode = 1;
+        return;
+    }
+
     // 1. Clear existing
     if (fs.existsSync(OUT_DIR)) {
         fs.rmSync(OUT_DIR, { recursive: true, force: true });

@@ -2,8 +2,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-const RUNS_DIR = path.join(process.cwd(), 'runs');
-const OUTPUT_DIR = path.join(process.cwd(), 'attachment', 'micro-reports');
+const ROOT_DIR = path.resolve(__dirname, '..');
+const RUNS_DIR = path.join(ROOT_DIR, 'runs');
+const OUTPUT_DIR = path.join(ROOT_DIR, 'attachment', 'micro-reports');
 
 // Models mapping based on directory prefixes
 const MODEL_PREFIXES = [
@@ -139,10 +140,19 @@ function generateTaskTable(jsonData: any): string {
 }
 
 async function main() {
+    if (!fs.existsSync(RUNS_DIR)) {
+        console.error(`Runs directory not found: ${RUNS_DIR}`);
+        process.exitCode = 1;
+        return;
+    }
+
     ensureDir(OUTPUT_DIR);
 
     const entries = fs.readdirSync(RUNS_DIR, { withFileTypes: true });
-    const allRuns = entries.filter(e => e.isDirectory()).map(e => e.name);
+main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+});
 
     for (const prefix of MODEL_PREFIXES) {
         const modelRuns = allRuns.filter(r => r.startsWith(prefix));

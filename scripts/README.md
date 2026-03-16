@@ -4,7 +4,9 @@ This directory contains various utility scripts for analyzing benchmark results,
 
 ## 📊 Report Generation (Report Generation)
 
-These scripts process raw data from the `runs/` directory (produced by `npm run forge` or `forge batch`) and generate human-readable Markdown reports.
+These scripts process raw data from the `runs/` directory produced by FORGE runs and generate human-readable Markdown reports.
+
+Several scripts in this directory currently resolve paths relative to `scripts/` rather than the repository root. Treat the file inventory below as a developer reference, not a guarantee that every example command will run unchanged in the current repository state.
 
 | Script | Description | Output |
 | :--- | :--- | :--- |
@@ -15,11 +17,8 @@ These scripts process raw data from the `runs/` directory (produced by `npm run 
 
 ### Usage
 ```bash
-# Generate the high-level summary
-npx ts-node scripts/generate_run_summary.ts
-
-# Generate the detailed model report
-npx ts-node scripts/generate_model_report.ts
+# Run a root-aware script that reads ../runs
+npx ts-node scripts/recompute_run_metadata.ts
 ```
 
 ## 📈 Data Analysis (Data Analysis)

@@ -1,8 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 
-const RUNS_DIR = path.resolve(__dirname, 'runs');
-const OUTPUT_FILE = path.resolve(__dirname, 'runs_summary.md');
+const ROOT_DIR = path.resolve(__dirname, '..');
+const RUNS_DIR = path.join(ROOT_DIR, 'runs');
+const OUTPUT_FILE = path.join(ROOT_DIR, 'runs_summary.md');
 
 interface RunConfig {
     runId: string;
@@ -31,6 +32,7 @@ interface EvalReport {
 async function main() {
     if (!fs.existsSync(RUNS_DIR)) {
         console.error(`Runs directory not found: ${RUNS_DIR}`);
+        process.exitCode = 1;
         return;
     }
 
@@ -111,4 +113,7 @@ Generated on: ${new Date().toLocaleString()}
     console.log(`Summary written to ${OUTPUT_FILE}`);
 }
 
-main();
+main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+});
